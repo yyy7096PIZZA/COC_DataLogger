@@ -45,7 +45,7 @@
 | 35 | Octal PSRAM (N16R8) | 예약·금지 | | — |
 | 36 | Octal PSRAM (N16R8) | 예약·금지 | | — |
 | 37 | Octal PSRAM (N16R8) | 예약·금지 | | — |
-| 38 | WS2812B 온보드 RGB LED (led_strip RMT, 부팅 시 소등) | 사용중 | DevKit v1.1 온보드 LED. 베어 모듈 PCB엔 LED 없으나 펌웨어가 RMT로 점유 → 외부 신호 금지 권장 | `main/main.c:95-108` |
+| 38 | WS2812B 온보드 RGB LED (led_strip RMT, task_led 상태색 표시) | 사용중 | DevKit v1.1 온보드 LED. 베어 모듈 PCB엔 LED 없으나 펌웨어가 RMT로 점유 → 외부 신호 금지 권장 | `main/main.c` |
 | 39 | SD SPI SCK | 사용중 | SDSPI, 400kHz 프로빙 | `main/peripheral/sdcard.c:13` |
 | 40 | SD SPI MOSI | 사용중 | | `main/peripheral/sdcard.c:14` |
 | 41 | SD SPI CS | 사용중 | | `main/peripheral/sdcard.c:16` |
@@ -67,7 +67,7 @@
 
 | 항목 | GPIO | 비고 |
 |------|:----:|------|
-| 온보드 RGB LED (WS2812B) | 38 | DevKitC-1 v1.1 내장, 부팅 시 소등만 |
+| 온보드 RGB LED (WS2812B) | 38 | DevKitC-1 v1.1 내장, task_led 상태색 표시 (초록/노랑/빨강, 저휘도) |
 | BOOT 버튼 | 0 | 온보드 (다운로드 모드용) |
 | RESET 버튼 | (EN) | 온보드 칩 리셋 (GPIO 아님) |
 | 네이티브 USB | 19/20 | 온보드 USB 커넥터 |
