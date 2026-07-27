@@ -6,15 +6,12 @@ DIY data logging platform for Student Formula and Baja: ESP32-S3 firmware record
 
 ## Development Environment
 
-- **Required ESP-IDF version: v6.0.1**
-- Verify with `idf.py --version` before building.
-- **Building with a different version may break the firmware — always use v6.0.1.**
+- **Required ESP-IDF version: v6.0.1** — verify with `idf.py --version` before building. Any other version may break the firmware.
 
 ## Features
 
 * 💾 Firmware logs straight to SD — no WiFi, no server, no live telemetry link
    * GPS (NMEA GPRMC) sets the wall clock so recorded logs carry correct absolute time
-   * Recorded `.log` files are analyzed on the external upstream site: https://v2.monolith.luftaquila.io/
 
 * 📀 Up to 100 Hz data rate with various signals
    * 1x CAN 2.0(A/B)
@@ -31,7 +28,7 @@ DIY data logging platform for Student Formula and Baja: ESP32-S3 firmware record
 
 ## Others
 
-The name of the project was inspired by Arthur C. Clark's novel `2001: A Space Odyssey`.
+The project name was inspired by Arthur C. Clark's novel `2001: A Space Odyssey`.
 
 ## Sponsors
 
@@ -49,8 +46,6 @@ LUFT-AQUILA wrote this project. As long as you retain this notice,
 you can do whatever you want with this stuff. If we meet someday,
 and you think this stuff is worth it, you can buy me a beer in return.
 ```
-
-<br>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=CreatOurCar/monolith&type=Date&theme=dark" />
