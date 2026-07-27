@@ -38,3 +38,21 @@ make clean           # remove build directory
 ## Commit Messages
 
 Use lowercase prefixed format: `fix:`, `add:`, `update:`, `bump:`, `impl:` (e.g., `fix: CAN decoder idx mismatch with chart series order`).
+
+---
+
+## Line endings
+
+This repo has a `.gitattributes`: the repository stores LF, Windows checkouts
+get CRLF. `*.sh` and `gradlew` are forced to LF (CRLF breaks execution on
+Linux); `*.bat`, `*.cmd`, `*.ps1` are forced to CRLF. Binaries are excluded
+from conversion.
+
+Do not disable this, and do not commit line-ending-only changes. If a diff
+shows every line of a file as changed, that is an EOL issue — check
+`.gitattributes` and `core.autocrlf` instead of committing it.
+
+## Two-machine sync (desktop PC / laptop)
+
+Sync is via GitHub `origin` (this repo is a fork; `upstream` points at
+luftaquila/monolith). Pull before starting work, push when finishing.
