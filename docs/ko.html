@@ -1,0 +1,227 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Monolith v2 Documentation</title><meta property="og:title"content="Monolith v2 Documentation"><meta name="twitter:title"content="Monolith v2 Documentation"><meta name="description"content="Documentation for Monolith v2"><meta property="og:description"content="Documentation for Monolith v2"><meta name="twitter:description"content="Documentation for Monolith v2"><link rel="icon"href="images\favicon.ico"><meta name="viewport"content="width=device-width,initial-scale=1"><style>*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:currentColor}html{font-size:16px;line-height:1;-webkit-text-size-adjust:100%}ol,ul{padding:0;list-style-type:none}blockquote,body,h1,h2,h3,h4,h5,h6,hr,input,li,ol,p,pre,ul{margin:0}h1,h2,h3,h4,h5,h6,th{font:inherit}a{text-decoration:none}button{display:block;padding:0;border:0;margin:0;background-color:transparent;border-radius:0}:root{--base-font-size-sm:15px;--base-font-size-md:16px;--base-font-size-lg:18px;--base-font-size-xl:20px;--border-radius:0.25rem;--color-bg-1:#fff;--color-bg-2:#f5f5f5;--color-fg-1:#000;--color-fg-2:#303030;--color-fg-3:#7f7f7f;--color-fg-4:#a6a6a6;--color-fg-5:#ccc;--color-accent:#946709;--color-addition-fg:#22863a;--color-addition-bg:#f0fff4;--color-deletion-fg:#b31d28;--color-deletion-bg:#ffeef0;--font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji';--font-family-code:SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace;--font-weight-regular:normal;--font-weight-bold:bold;--font-size-code:90%;--font-size-sm:0.8rem;--font-size-md:1rem;--line-height-sm:1.25rem;--line-height-md:1.75rem;--size-1:0.25rem;--size-2:0.5rem;--size-3:0.75rem;--size-4:1rem;--size-5:1.25rem;--size-6:1.5rem;--size-7:1.75rem;--size-8:2rem;--size-9:2.25rem;--size-10:2.5rem;--size-12:3rem;--size-16:4rem;--size-20:5rem;--size-24:6rem;--z-index-1:1;--scroll-margin-top:calc(var(--top-bar-height) + 40px);--toc-width:16rem;--top-bar-height:3rem}@media (prefers-color-scheme:dark){:root{color-scheme:dark;--color-bg-1:#000;--color-bg-2:#141414;--color-fg-1:#fff;--color-fg-2:#ccc;--color-fg-3:#7f7f7f;--color-fg-4:#595959;--color-fg-5:#333;--color-accent:#f7eab2;--color-addition-fg:#aff5b4;--color-addition-bg:#033a16;--color-deletion-fg:#ffdcd7;--color-deletion-bg:#67060c}}html{font-size:var(--base-font-size-sm)}body{background-color:var(--color-bg-1);color:var(--color-fg-1);font-family:var(--font-family)}.--menu-visible{overflow:hidden}@media (min-width:640px){html{font-size:var(--base-font-size-md)}.--menu-visible{overflow:visible}}@media (min-width:960px){html{font-size:var(--base-font-size-lg)}}@media (min-width:1280px){html{font-size:var(--base-font-size-xl)}}.content{padding:0 var(--size-4) 0 var(--size-4);font-size:var(--font-size-md);font-weight:var(--font-weight-regular);line-height:var(--line-height-md)}.content__inner{padding:var(--top-bar-height) 0 var(--size-12) 0}.content__inner>:not(pre){overflow-wrap:break-word}.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{font-weight:var(--font-weight-bold)}.content h1{margin-top:var(--size-20);margin-bottom:var(--size-4);font-size:var(--size-8);font-weight:var(--font-weight-bold);letter-spacing:-.0625rem;line-height:var(--size-10)}.content h2{margin-top:var(--size-12);font-size:var(--size-6);letter-spacing:-.03125rem;line-height:var(--size-9)}.content h3{margin-top:var(--size-8);font-size:var(--size-5);letter-spacing:-.03125rem;line-height:var(--size-8)}.content h4{margin-top:var(--size-6);font-size:var(--size-4)}.content h5{margin-top:var(--size-4);font-size:var(--size-3)}.content h6{margin-top:var(--size-4);color:var(--color-fg-2);font-size:var(--size-3);font-style:italic}.content [id]{scroll-margin-top:var(--scroll-margin-top)}.header-link{display:inline-block;padding:0 var(--size-4);color:var(--color-fg-3);font-size:var(--font-size-md);font-weight:var(--font-weight-bold)}.header-link:hover{color:var(--color-fg-2)}.content hr{width:100%;height:1px;border:0;margin-top:var(--size-12);background-color:var(--color-fg-5)}.content a:not(.header-link){color:currentColor;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:0.1875rem}.content a:not(.header-link):hover{text-decoration:none}.content a:focus-visible,.content a:focus-visible code{background-color:var(--color-fg-1);color:var(--color-bg-1);outline:0}.content__inner div p,.content__inner>blockquote,.content__inner>ol,.content__inner>p,.content__inner>table,.content__inner>ul{margin-top:var(--size-4)}.content blockquote{position:relative;padding:var(--size-2) 0 var(--size-2) var(--size-7);color:var(--color-fg-3)}.content blockquote:before{position:absolute;top:0;bottom:0;left:2px;display:block;width:1px;background-color:var(--color-fg-5);content:''}.content li{position:relative;padding-left:var(--size-7)}.content li:before{position:absolute;top:0;left:0;display:block}.content ul li:before{content:'◦'}.content ol{counter-reset:count}.content ol li{counter-increment:count}.content ol li:before{content:counter(count);font-variant-numeric:tabular-nums}.content table th{color:var(--color-fg-3)}.content img{display:inline-block;max-width:100%}.content code{padding:var(--size-1);background-color:var(--color-bg-2);border-radius:var(--border-radius);color:var(--color-fg-2);font-family:var(--font-family-code);font-size:var(--font-size-code)}.content pre{margin:var(--size-6) 0;color:var(--color-fg-2)}.content pre code{display:block;padding:var(--size-4);overflow-x:auto}.content strong{font-weight:var(--font-weight-bold)}@media (min-width:640px){.content__inner{max-width:70ch;margin:0 auto}}@media (min-width:1280px){.content{margin-left:var(--toc-width)}.content__inner{max-width:66ch}}@media (min-width:1600px){.content__inner{max-width:70ch}.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{position:relative;display:block;padding-left:var(--size-9);margin-left:calc(-1 * var(--size-9))}.header-link{position:absolute;top:0;bottom:0;left:0;display:block;padding:0 var(--size-3)}}@media (hover:hover){.header-link{opacity:0}.content h1:hover .header-link,.content h2:hover .header-link,.content h3:hover .header-link,.content h4:hover .header-link,.content h5:hover .header-link,.content h6:hover .header-link{opacity:1}}.hljs-strong{font-weight:var(--font-weight-bold)}.hljs-emphasis,.hljs-params{font-style:italic}.hljs-comment,.hljs-function,.hljs-keyword,.hljs-meta,.hljs-section,.hljs-selector-class,.hljs-selector-id,.hljs-selector-pseudo,.hljs-variable,.language-html .hljs-tag,.language-json.hljs{color:var(--color-fg-3)}.hljs,.hljs-attr,.hljs-params,.hljs-title,.language-html .hljs-tag .hljs-name,.language-js .xml .hljs-tag .hljs-name,.language-ts .xml .hljs-tag .hljs-name{color:var(--color-fg-2)}.hljs-attribute,.hljs-built_in,.hljs-builtin-name,.hljs-string,.hljs-symbol,.hljs-template-tag,.hljs-template-variable{color:var(--color-fg-1)}.hljs-bullet,.hljs-link,.hljs-literal,.hljs-name,.hljs-number,.hljs-quote,.hljs-regexp,.hljs-selector-attr,.hljs-selector-tag,.language-html .hljs-attr,.language-js .xml .hljs-attr,.language-ts .xml .hljs-attr{color:var(--color-accent)}.hljs-deletion{background-color:var(--color-deletion-bg);color:var(--color-deletion-fg)}.hljs-addition{background-color:var(--color-addition-bg);color:var(--color-addition-fg)}.menu{position:fixed;top:var(--top-bar-height);bottom:0;left:0;display:none;width:100%;padding:var(--size-3) 0;border-right:1px solid var(--color-fg-5);background-color:var(--color-bg-1);font-size:var(--font-size-md);line-height:var(--line-height-md);overflow-y:auto}.--menu-visible .menu{display:block}.menu a{position:relative;display:block;padding:var(--size-1) var(--size-4);color:var(--color-fg-3);overflow-wrap:break-word}.menu li li a{padding-left:var(--size-8)}.menu li li li a{padding-left:var(--size-12)}.menu li li li li a{padding-left:var(--size-16)}.menu li li li li li a{padding-left:var(--size-20)}.menu li li li li li li a{padding-left:var(--size-24)}.menu a:not(.--scroll-spy-active):hover{color:var(--color-fg-2)}.menu a:focus-visible{background-color:var(--color-fg-1);color:var(--color-bg-1);outline:0}.menu a[target='_blank']:after{content:' ↗'}.menu .--scroll-spy-active{color:var(--color-fg-1)}.menu code{font-family:var(--font-family-code);font-size:var(--font-size-code)}@media (min-width:960px){.menu{width:var(--toc-width);font-size:var(--font-size-sm);line-height:var(--line-height-sm)}.--no-toc .menu{display:none}.menu__links{display:none}}@media (min-width:1280px){.menu{display:block;border-right:0}}.top-bar{position:fixed;z-index:var(--z-index-1);top:0;right:0;left:0;display:flex;background-color:var(--color-bg-1);font-size:var(--font-size-md);line-height:var(--top-bar-height);overflow-x:auto;white-space:nowrap}.top-bar:before{position:fixed;top:var(--top-bar-height);right:0;left:0;display:block;height:1px;background-color:var(--color-fg-5);content:'';pointer-events:none}.top-bar a{position:relative;z-index:var(--z-index-1);display:block;padding:0 var(--size-2);color:var(--color-fg-3)}.top-bar a:not(.--scroll-spy-active):hover{color:var(--color-fg-2)}.top-bar a:focus-visible{background-color:var(--color-fg-1);color:var(--color-bg-1);outline:0}.top-bar .--scroll-spy-active{border-bottom:1px solid var(--color-fg-1);color:var(--color-fg-1)}.top-bar__menu-toggle-button{position:relative;display:flex;height:var(--top-bar-height);align-items:center;padding:0 var(--size-4);margin-right:calc(-1 * var(--size-2));color:var(--color-fg-3);cursor:pointer}.top-bar__menu-toggle-button:hover{color:var(--color-fg-2)}.top-bar__menu-toggle-button:focus{outline:0}.top-bar__menu-toggle-button:focus-visible{background-color:var(--color-fg-1);color:var(--color-bg-1);outline:0}.top-bar__menu-toggle-button-close-svg,.top-bar__menu-toggle-button-menu-svg{width:var(--font-size-md);height:var(--font-size-md)}.top-bar__menu-toggle-button-menu-svg{display:block}.--menu-visible .top-bar__menu-toggle-button-menu-svg{display:none}.top-bar__menu-toggle-button-close-svg{display:none}.--menu-visible .top-bar__menu-toggle-button-close-svg{display:block}.top-bar__title{flex-grow:1;padding-left:var(--size-2);color:var(--color-fg-3)}.top-bar .top-bar__title-link{display:inline-block}.top-bar__title-version{display:inline-block;color:var(--color-fg-4)}.top-bar__items{display:none}@media (min-width:960px){.top-bar{font-size:var(--font-size-sm)}.--no-toc .top-bar__menu-toggle-button{display:none}.top-bar__items{display:flex;padding-right:var(--size-2)}.top-bar__items>ul,.top-bar__items>ul li{display:flex}.top-bar__items a[target='_blank']:after{content:' ↗'}}@media (min-width:1280px){.top-bar__menu-toggle-button{display:none}}</style></head><body class=""><main class="content"data-js="content"><div class="content__inner"><h1 id="monolith-v2">Monolith v2<a aria-hidden class="header-link"tabindex="-1"href="#monolith-v2">#</a></h1><p><img src="images%5Cwide.jpg"alt=""></p><h2 id="개요">개요<a aria-hidden class="header-link"tabindex="-1"href="#개요">#</a></h2><p>모노리스는 TMA-1 데이터로거와 웹 기반 Control Hub로 구성된 무선 데이터로깅 플랫폼입니다.</p><p>Formula Student 및 Baja Student 대회에 참가하는 학생들의 차량 데이터 수집을 위해 개발되었으나, 다른 분야의 데이터 계측이나 ESP32 개발 보드로도 활용할 수 있습니다.</p><p>모든 소스코드가 <a href="https://github.com/CreatOurCar/monolith"target="_blank"rel="nofollow">GitHub</a>에 공개되어 있으며, 비상업적 용도에 한해 🍺<a href="https://spdx.org/licenses/Beerware.html"target="_blank"rel="nofollow">Beerware License</a>로 자유롭게 사용할 수 있습니다.</p><h3 id="기능">기능<a aria-hidden class="header-link"tabindex="-1"href="#기능">#</a></h3><p>📡 무선 통신 지원</p><ul><li>실시간 텔레메트리</li><li>로그 데이터 원격 다운로드</li><li>원격 사용자 이벤트 전송</li><li>원격 CAN 메시지 전송</li><li>장치 설정 변경</li></ul><p>📀 최대 100 Hz 데이터로깅</p><ul><li>1x CAN 2.0(A/B)</li><li>1x 외장 GPS 모듈</li><li>1x 6축 가속도계 &#x26; 자이로</li><li>4x 디지털 입력<sup>1</sup></li><li>6x 아날로그 입력<sup>1</sup></li><li>1x 전원 전압 센서</li><li>1x 칩 온도 센서</li></ul><p><sup>1</sup> mini 버전에서는 지원하지 않습니다.</p><p>💡 웹 기반 데이터 분석 도구</p><p>모든 무선 통신 기능은 Wi-Fi 연결이 필요합니다. 차량에서 사용하기 위해서는 드라이버가 Wi-Fi 핫스팟을 켠 휴대폰을 가지고 타야 합니다.</p><h3 id="미리보기">미리보기<a aria-hidden class="header-link"tabindex="-1"href="#미리보기">#</a></h3><h4 id="v1-대비-변경사항">v1 대비 변경사항<a aria-hidden class="header-link"tabindex="-1"href="#v1-대비-변경사항">#</a></h4><p><img src="images%5Ccompare.jpg"alt=""></p><ul><li>크기와 제작 비용이 모두 3분의 1로 줄었습니다.</li><li>데이터 처리 성능과 무선통신 안정성이 대폭 개선되었습니다.</li><li>원격으로 로그를 다운로드할 수 있습니다. 데이터를 확인하기 위해 SD카드를 뽑을 필요가 없습니다.</li><li>원격으로 사용자 이벤트를 로그에 삽입하거나 CAN 메시지를 전송할 수 있습니다.</li><li>펌웨어 플래싱 없이도 원격으로 데이터로거 설정을 변경할 수 있습니다.</li><li>웹 UI로 모든 기능을 제공하므로 전용 프로그램을 따로 설치할 필요가 없습니다.</li></ul><h4 id="original-vs-mini">Original vs mini<a aria-hidden class="header-link"tabindex="-1"href="#original-vs-mini">#</a></h4><p>Mini 버전은 Original 대비 절반 가까운 크기로, 신용카드보다도 작은 크기를 자랑합니다.</p><p>대신, 작은 크기를 위해 디지털 및 아날로그 입력 채널이 제거되었습니다. 그 외의 다른 기능은 모두 동일합니다.</p><h2 id="do-it-yourself">Do It Yourself!<a aria-hidden class="header-link"tabindex="-1"href="#do-it-yourself">#</a></h2><h3 id="펌웨어-업로드">펌웨어 업로드<a aria-hidden class="header-link"tabindex="-1"href="#펌웨어-업로드">#</a></h3><ol><li>3.3V UART to USB 컨버터를 준비합니다.<ul><li>⚠️ 컨버터에는 <code>RX</code>, <code>TX</code> 외에도 <code>DTR</code>, <code>RTS</code> 핀이 <strong>반드시</strong> 있어야 합니다.</li><li>⚠️ 5V 컨버터는 별도의 3.3V 전압 선택 스위치가 없다면 사용할 수 없습니다.</li></ul></li><li>보드의 UART 커넥터에 2x3 2.54mm 핀 헤더를 납땜합니다.</li><li>각 핀을 다음과 같이 연결합니다.<ul><li><code>3V3</code>, <code>GND</code>, <code>DTR</code>, <code>RTS</code>: 컨버터에 있는 같은 이름의 핀과 연결</li><li><code>RX</code>, <code>TX</code>: 컨버터의 핀과 서로 교차하여 연결 (<code>RX</code> ↔ <code>TX</code>)</li></ul></li><li><a href="https://github.com/CreatOurCar/monolith/releases/latest"target="_blank"rel="nofollow">Release</a>에서 <code>monolith-{version}.zip</code>을 다운받고 압축을 해제합니다.</li><li><code>flash.sh</code> (Linux/macOS) 또는 <code>flash.bat</code> (Windows) 파일을 실행합니다.<ul><li><code>python</code> 이 설치되어 있어야 합니다.</li></ul></li></ol><h3 id="서버-준비">서버 준비<a aria-hidden class="header-link"tabindex="-1"href="#서버-준비">#</a></h3><p>TMA-1과 Control Hub가 서로 통신하려면 MQTT 서버(브로커)가 필요합니다.</p><p>서버는 로컬 네트워크에 직접 호스팅합니다. 아래 가이드를 따라 직접 배포할 수 있습니다.</p><details><summary>직접 서버 배포하기</summary><h4>서버 배포</h4><p>기본 서버를 사용하지 않는다면 상용 MQTT 브로커를 사용하거나 아래 가이드를 따라 직접 서버를 배포해 사용할 수 있습니다.</p><p>아래 가이드는 DNS, 방화벽 등 서버 관련 지식이 어느 정도 있다고 가정합니다.</p><p><a href="https://docs.docker.com/engine/install/"target="_blank"rel="nofollow">Docker Engine</a>과 <a href="https://nodejs.org/en/download"target="_blank"rel="nofollow">Node.js</a>가 설치된 리눅스 머신이 필요합니다. 없다면 <a href="https://www.oracle.com/cloud/free/"target="_blank"rel="nofollow">여기</a>서 무료로 인스턴스를 만들 수 있습니다.</p><p>이론상 Docker Desktop과 Windows 머신으로도 할 수 있지만, 테스트해본 적은 없습니다.</p><p>아래 명령을 실행합니다. <code>&#x3C;YOUR_CHANNEL_NAME></code>은 사용할 이름으로 변경합니다.</p><pre><code class="hljs language-sh">sudo apt install -y mosquitto
+git <span class="hljs-built_in">clone</span> https://github.com/CreatOurCar/monolith.git
+
+<span class="hljs-built_in">cd</span> monolith/web
+npm install
+npm run build
+
+<span class="hljs-built_in">cd</span> ../server/config
+<span class="hljs-comment"># set your channel key as the password</span>
+mosquitto_passwd -c mosquitto.passwd &#x3C;YOUR_CHANNEL_NAME>
+
+<span class="hljs-built_in">cd</span> ..
+<span class="hljs-built_in">cp</span> .env.example .<span class="hljs-built_in">env</span>
+vi .<span class="hljs-built_in">env</span> <span class="hljs-comment"># set `ACME_EMAIL` and `DOMAIN_NAME` to your own</span>
+
+sudo docker compose up -d
+</code></pre><h5 id="서버-공지사항">서버 공지사항<a aria-hidden class="header-link"tabindex="-1"href="#서버-공지사항">#</a></h5><p><code>.env</code> 파일의 <code>ANNOUNCEMENT</code> 환경변수를 설정하면 Control Hub 접속 시 공지사항 팝업을 표시할 수 있습니다.</p><pre><code class="hljs language-sh">ANNOUNCEMENT=서버 점검 예정: 2025-01-15 02:00 ~ 04:00 (KST)
+</code></pre></details><h2 id="사용법">사용법<a aria-hidden class="header-link"tabindex="-1"href="#사용법">#</a></h2><h3 id="tma-1">TMA-1<a aria-hidden class="header-link"tabindex="-1"href="#tma-1">#</a></h3><h4 id="wi-fi">Wi-Fi<a aria-hidden class="header-link"tabindex="-1"href="#wi-fi">#</a></h4><p>TMA-1의 무선 통신 기능(실시간 텔레메트리 및 데이터 다운로드 등)을 사용하기 위해서는 2.4GHz Wi-Fi 연결이 필요합니다.</p><p>데이터로깅 기능은 Wi-Fi 연결이 없어도 동작합니다. 오프라인으로 사용하려면 주행 이후 SD 카드를 분리하여 PC에 마운트하면 됩니다.</p><p>다만 TMA-1의 내부 시계는 네트워크를 통해 SNTP로 자동 동기화되므로, 최소한 한 번은 인터넷에 연결해 시간을 동기화해야 합니다.</p><h5 id="초기-설정">초기 설정<a aria-hidden class="header-link"tabindex="-1"href="#초기-설정">#</a></h5><ol><li>장치에 전원을 공급합니다.</li><li>첫 부팅 시 <code>Monolith v2 XXXXXX</code> 라는 자체 Wi-Fi AP가 생성됩니다. 비밀번호는 <code>monolith</code>입니다.</li><li>해당 AP에 연결하면 자동으로 설정 페이지가 열립니다. 열리지 않으면 브라우저에서 <a href="http://192.168.4.1"target="_blank"rel="nofollow">http://192.168.4.1</a>에 직접 접속합니다.<br><img src="images%5Cap.png"alt=""></li><li>TMA-1이 주행 중 연결할 휴대폰(드라이버가 들고 탈 휴대폰)의 핫스팟 정보를 <code>Wi-Fi SSID</code>와 <code>Wi-Fi Password</code>에 입력합니다.</li><li><code>Server Address</code>에 사용할 서버 주소를 입력합니다.</li><li>서버의 채널 이름 및 키와 동일한 값을 <code>Device Name</code>과 <code>Device Key</code>에 입력합니다.</li><li><code>Save</code>를 클릭하고 <code>Reboot</code>를 클릭합니다.</li></ol><p>재부팅 이후 TMA-1은 설정된 Wi-Fi로 연결을 시도합니다.</p><h5 id="초기화">초기화<a aria-hidden class="header-link"tabindex="-1"href="#초기화">#</a></h5><p>Wi-Fi와 서버 설정을 초기화하려면 리셋 버튼을 3초 이상 누르고 뗍니다. Wi-Fi, 서버, 디바이스 이름과 키 등 모든 설정이 초기값으로 복원됩니다.</p><p>초기화 후 위 <code>초기 설정</code> 단계부터 다시 진행합니다.</p><h3 id="control-hub">Control Hub<a aria-hidden class="header-link"tabindex="-1"href="#control-hub">#</a></h3><p>Control Hub는 직접 호스팅한 서버에서 제공되는 웹 앱입니다 (위 <code>서버 준비</code> 참고).</p><h4 id="live-telemetry">Live Telemetry<a aria-hidden class="header-link"tabindex="-1"href="#live-telemetry">#</a></h4><p>실시간 텔레메트리를 사용하려면 먼저 <code>Device Configuration</code> 탭에서 서버 정보를 설정해야 합니다.</p><p>또한, 수신되는 CAN 데이터를 보려면 먼저 <code>UI Configuration</code> 탭에서 CAN Decoder를 설정해야 합니다.</p><p>서버를 잘 설정했고 TMA-1이 네트워크에 연결되어 있다면 모든 기능은 알아서 잘 작동합니다.</p><p>GPS 카드에서 <code>Fix</code> / <code>No Fix</code> 태그로 위성 수신 상태를 확인할 수 있습니다. 궤적 표시 모드를 <code>Speed</code> (초록=저속, 빨강=고속) 또는 <code>Time</code> (남색=과거, 초록=최근)으로 전환할 수 있습니다.</p><h5 id="console">Console<a aria-hidden class="header-link"tabindex="-1"href="#console">#</a></h5><p>사용자 이벤트나 CAN 메시지를 장치로 전송할 수 있습니다.</p><p><img src="images%5Cconsole.png"alt=""></p><ul><li>사용자 이벤트<ul><li>사용자 이벤트는 주행 이후 데이터 리뷰에 도움이 되는 의미 있는 지점을 표시합니다.</li><li>이벤트를 전송하려면 이름을 입력하고 전송 버튼을 누릅니다.</li><li>이벤트 이름을 입력하지 않으면 <code>USREVT</code>로 기록됩니다.</li><li>이벤트 이름은 16바이트 이하의 ASCII 문자열만 사용 가능합니다.</li></ul></li><li>CAN 메시지<ul><li>전송할 CAN 메시지 ID(11/29비트)와 데이터를 입력하고 전송 버튼을 클릭합니다.</li><li>입력하지 않은 데이터 바이트들은 <code>0x00</code>으로 전송됩니다.</li></ul></li></ul><h4 id="data-viewer">Data Viewer<a aria-hidden class="header-link"tabindex="-1"href="#data-viewer">#</a></h4><p>주행 데이터를 열람하려면 먼저 기록을 다운로드해야 합니다. <code>Device Configuration</code> 탭의 <code>Data Downloader</code> 섹션을 참고해 데이터를 다운로드합니다.</p><ul><li><code>Select</code>를 눌러 다운받은 <code>*.log</code> 파일을 엽니다.</li><li><code>Graph</code> 카드에서 입력 카테고리 버튼이나 범례의 신호 이름을 눌러 그래프를 활성화합니다.</li><li><code>GPS</code> 카드에서 차량의 이동 궤적을 색상 그라디언트로 확인할 수 있습니다. <code>Speed</code> (초록=저속, 빨강=고속) 또는 <code>Time</code> (남색=과거, 초록=최근) 모드로 전환할 수 있으며, 슬라이더를 조절하면 특정 시점의 위치, 속도, 방위각을 볼 수 있습니다.</li><li><code>CAN</code> 카드에서 기록된 CAN 메시지의 통계를 확인할 수 있습니다: 메시지 ID, 총 수신 횟수, 평균 주기(Hz / ms), DLC, 마지막 데이터 바이트를 표시합니다.</li></ul><p>기록된 CAN 데이터를 보려면 <code>UI Configuration</code> 탭에서 CAN Decoder를 먼저 설정해야 합니다.</p><h4 id="ui-configuration">UI Configuration<a aria-hidden class="header-link"tabindex="-1"href="#ui-configuration">#</a></h4><p>Live Telemetry와 Data Viewer의 각 카드의 표시 여부를 조정하거나 입력 신호의 이름과 단위, 배율을 설정할 수 있습니다.</p><p>변경 사항을 적용하려면 페이지를 새로고침해야 합니다.</p><h5 id="importexport">Import/Export<a aria-hidden class="header-link"tabindex="-1"href="#importexport">#</a></h5><p>현재 UI 설정을 내보내고 다른 기기나 브라우저에서 가져올 수 있습니다.</p><h5 id="display">Display<a aria-hidden class="header-link"tabindex="-1"href="#display">#</a></h5><p>Live Telemetry 및 Data Viewer에서 각 카드의 표시 여부를 제어합니다.</p><h5 id="units">Units<a aria-hidden class="header-link"tabindex="-1"href="#units">#</a></h5><p>아날로그 및 CAN 데이터에 사용할 사용자 정의 단위를 관리합니다.</p><h5 id="digital">Digital<a aria-hidden class="header-link"tabindex="-1"href="#digital">#</a></h5><p>채널 이름을 변경할 수 있습니다.</p><h5 id="analog">Analog<a aria-hidden class="header-link"tabindex="-1"href="#analog">#</a></h5><p><img src="images%5Canalog_ui.png"alt=""></p><ul><li><code>Name</code>: 그래프에 표시할 이름</li><li><code>Voltage Divider</code>: 해당 채널 입력이 1/2로 분배되는 경우 스위치를 켭니다.</li><li><code>Multiplier</code>: 측정된 실제 전압에 곱해지는 값입니다. 다음과 같은 경우에 수정합니다.<ul><li>센서에 추가 전압 분배 회로가 있는 경우</li><li>원래 물리량을 계산하는 수식이 있는 경우</li></ul></li><li><code>Unit</code>: 해당 데이터의 단위. 적절한 단위가 없다면 <code>Units</code> 카드에서 추가합니다.</li></ul><h5 id="can">CAN<a aria-hidden class="header-link"tabindex="-1"href="#can">#</a></h5><p>CAN 메시지 디코더를 관리합니다. 디코더는 CAN 페이로드에서 유효한 데이터를 추출합니다.</p><p><img src="images%5Ccan_decoder.png"alt=""></p><ul><li><code>Name</code>: 그래프에 표시할 이름</li><li><code>CAN Message ID</code>: 원하는 데이터가 포함된 CAN 메시지 ID</li><li><code>Multiplier</code>: 원본 값에 곱할 배율</li><li><code>Offset</code>: 곱셈 후 더할 값. 최종 값은 <code>multiplier × 원본 + offset</code>이며, 기본값은 <code>0</code>입니다.</li><li><code>Unit</code>: 해당 데이터의 단위. 적절한 단위가 없다면 <code>Units</code> 카드에서 추가합니다.</li><li><code>Data Range</code>: CAN 페이로드에서 데이터가 포함된 범위<ul><li>CAN 페이로드는 최대 8바이트입니다.<ul><li><code>Byte</code> 모드: #0 ~ #7</li><li><code>Bit</code> 모드: #0 ~ #63</li><li>단일 바이트나 비트를 선택하려면 시작과 끝 값을 동일하게 설정합니다.</li></ul></li></ul></li><li><code>Data Signedness</code><ul><li><code>Unsigned</code>: 데이터를 부호 없는 값으로 해석</li><li><code>Signed</code>: 데이터를 부호 있는 2의 보수로 해석</li></ul></li><li><code>Data Endianness</code><ul><li><code>Byte</code> 모드에서만 선택 가능합니다.</li><li>멀티바이트 데이터의 엔디언을 정의합니다.</li></ul></li><li><code>Data Filter</code> / <code>Data Mask</code> (선택): CAN 페이로드 내용으로 메시지를 필터링하는 HEX 값입니다. <code>(data &#x26; mask) == filter</code> 조건을 만족하는 메시지만 디코딩됩니다. 둘 다 함께 입력하거나 모두 비워야 합니다.</li></ul><h4 id="device-configuration">Device Configuration<a aria-hidden class="header-link"tabindex="-1"href="#device-configuration">#</a></h4><p>Control Hub가 연결할 서버와 장치 설정을 변경합니다.</p><p>장치가 인터넷에 연결되어 있다면 설정값을 자동으로 불러옵니다.</p><h5 id="server">Server<a aria-hidden class="header-link"tabindex="-1"href="#server">#</a></h5><ul><li><code>Address</code>: Control Hub가 사용할 서버 주소</li><li><code>Name</code> / <code>Key</code>: 채널 이름 및 키</li></ul><p>모든 값은 <code>TMA-1 - 초기 설정</code> 단계에서 장치에 입력한 값과 일치해야 합니다.</p><p>저장 버튼을 누르면 자동으로 서버에 연결합니다.</p><h5 id="device">Device<a aria-hidden class="header-link"tabindex="-1"href="#device">#</a></h5><ul><li><code>SSID</code> / <code>Password</code>: TMA-1이 연결할 Wi-Fi 네트워크</li><li><code>Timezone</code>: 지역에 맞는 POSIX 타임존 문자열. <a href="https://phpsecu.re/tz/"target="_blank"rel="nofollow">변환기</a>의 <code>TZ_INFO</code> 값을 사용하세요.<ul><li>이 값은 로그 파일 이름에 사용될 시간대를 결정합니다. 기록되는 데이터들의 시간은 UTC를 사용하므로 무관합니다.</li></ul></li><li><code>T. Interval</code>: 텔레메트리 전송 주기</li></ul><h5 id="inputs">Inputs<a aria-hidden class="header-link"tabindex="-1"href="#inputs">#</a></h5><p>디지털 및 아날로그 입력 채널의 로깅 여부를 제어합니다.</p><h5 id="can-1">CAN<a aria-hidden class="header-link"tabindex="-1"href="#can-1">#</a></h5><ul><li><code>Enabled</code>: CAN 버스 로깅 여부</li><li><code>Bit rate</code>: CAN 버스의 Baud rate</li><li><code>Filter</code>: 수신할 메시지 ID (11/29비트)</li><li><code>Mask</code>: 필터의 각 비트에 대한 통과 규칙<ul><li><code>0</code>: 해당하는 필터 비트가 일치해야 통과</li><li><code>1</code>: 해당하는 필터 비트 값을 무시 (don’t care)</li></ul></li></ul><p><code>Filter</code>와 <code>Mask</code>에 대한 자세한 내용은 <a href="https://docs.espressif.com/projects/esp-idf/en/v6.0.1/esp32s3/api-reference/peripherals/twai.html#acceptance-filter"target="_blank"rel="nofollow">ESP32-S3 API Reference</a>의 <em>Acceptance Filter</em> 항목을 참고하세요. 기본 설정은 모든 CAN 메시지를 허용합니다.</p><h5 id="gps">GPS<a aria-hidden class="header-link"tabindex="-1"href="#gps">#</a></h5><ul><li><code>Enabled</code>: GPS 위치 로깅 여부</li><li><code>Device</code>: GPS 모듈 종류를 선택합니다. 현재는 <code>UBLOX</code>만 사용 가능합니다.</li></ul><h5 id="danger-zone"><a href="https://www.youtube.com/watch?v=siwpn14IE7E"target="_blank"rel="nofollow">Danger Zone</a><a aria-hidden class="header-link"tabindex="-1"href="#danger-zone">#</a></h5><ul><li><code>Refresh</code>: 장치 설정값을 다시 불러옵니다.<ul><li>변경된 설정은 장치를 재시작해야 적용됩니다.</li><li>재시작하기 전에 새로고침하면 이전 설정값이 다시 로드됩니다.</li></ul></li><li><code>Restart</code>: 장치 재시작</li><li><code>Reset</code>: 장치 초기화</li></ul><h5 id="data-downloader">Data Downloader<a aria-hidden class="header-link"tabindex="-1"href="#data-downloader">#</a></h5><p><img src="images%5Cdownloader.png"alt=""></p><ul><li><code>Load List</code>: 현재 세션을 제외한 모든 로그 파일 목록을 불러옵니다.</li><li><code>Delete All</code>: 현재 세션을 제외한 모든 로그 파일을 삭제합니다.</li></ul><p>파일 목록을 불러온 뒤, 원하는 파일의 다운로드 버튼을 눌러 해당 파일을 다운로드합니다.</p><h2 id="development">Development<a aria-hidden class="header-link"tabindex="-1"href="#development">#</a></h2><p>직접 소프트웨어를 고쳐 사용하고 싶은 경우에만 필요합니다.</p><details><summary>세부 사항</summary><h3>펌웨어</h3><ol><li><a href="https://github.com/CreatOurCar/monolith"target="_blank"rel="nofollow">GitHub 저장소</a>에 ⭐를 누릅니다.</li><li><a href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/get-started/index.html"target="_blank"rel="nofollow">ESP-IDF</a>를 설치하고 아래 명령을 실행합니다.</li></ol><pre><code>git clone https://github.com/CreatOurCar/monolith.git
+cd monolith/device/firmware
+make build
+make run   # build &#x26; flash
+</code></pre><h3>Control Hub</h3><ol><li><a href="https://github.com/CreatOurCar/monolith"target="_blank"rel="nofollow">GitHub 저장소</a>에 ⭐를 누릅니다.</li><li>아래 명령을 실행합니다.</li></ol><pre><code>git clone https://github.com/CreatOurCar/monolith.git
+cd monolith/web
+npm install
+npm run vite
+npm run build
+</code></pre></details><style>body, .top-bar, .menu {
+  background-color: #f1f5f9 !important;
+  color: rgb(51, 65, 85) !important;
+}
+
+h1, h2, h3, h4, h5 {
+  color: #000!important;
+}
+
+@media (prefers-color-scheme: dark) {
+  body, .top-bar, .menu {
+    background-color: #0A0A0C !important;
+    color: rgb(209, 213, 219) !important;
+  }
+
+  h1, h2, h3, h4, h5 {
+    color: #fff !important;
+  }
+}
+
+/* Thick title font */
+.top-bar__title-link {
+  font-weight: 600;
+}
+
+/* Hide h2 headers on topbar */
+.top-bar__items ul:first-child {
+  display: none;
+}
+
+/* Hide h1 header on sidebar */
+.menu > ul:nth-child(2) > li > a,
+.menu > ul:nth-child(2) > li li li li li a {
+  display: none;
+}
+
+.menu li li a {
+  padding-left: 1rem;
+}
+
+.menu li li li a {
+  padding-left: 2rem;
+}
+
+.menu li li li li a {
+  padding-left: 3rem;
+}
+
+/* Wider content width */
+.content__inner {
+  max-width: 80ch !important;
+}
+
+/* Add dot next to the number */
+.content ol li:before {
+  content: counter(count)'.' !important
+}
+
+/* Skip number increment on ul */
+.content ul li {
+  counter-increment: none;
+}
+
+/* Better bullet for li */
+.content ul li:before {
+  content: '◦' !important
+}
+
+/* Better margins for list */
+.content ul, .content ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.content ul li, .content ol li {
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+}
+
+.content li ul li, .content li ol li {
+  margin-left: 0.5rem;
+}
+
+/* limit image width for vertical images */
+.content img {
+  max-height: 700px;
+}
+
+/* Slack style inline code block */
+.content code {
+  color: #e8912d !important;
+}
+
+/* Github style code block */
+.content pre code {
+  font-size: 0.9rem;
+  line-height: 1.2rem;
+  color: #ccc !important;
+}
+
+/* Same margin as outside details */
+.content details,
+.content details p {
+  margin-top: 1rem;
+}
+
+/* Cursor pointer for details expand */
+.content details summary {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.1875rem;
+}
+
+/* More margin at header bottom */
+.content h1, .content h2, .content h3, .content h4 {
+  margin-bottom: 1rem;
+}
+
+.content h5 {
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* Github style table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background: #f1f5f9;
+  color: #111;
+}
+
+th, td {
+  padding: 7px 12px;
+  border: 1px solid #d0d7de;
+}
+
+thead th {
+  background: #f2f2f2;
+  color: #0a0a0a !important;
+  font-weight: 600;
+  border-bottom-width: 2px;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, .03);
+}
+
+tbody tr:hover {
+  background: rgba(0, 0, 0, .06);
+}
+
+caption {
+  caption-side: bottom;
+  padding-top: .5em;
+  font-size: .875rem;
+  color: #666;
+  text-align: left;
+}
+
+@media (prefers-color-scheme: dark) {
+  table {
+    background: #09090b;
+    color: #f0f3f6;
+  }
+
+  th, td {
+    border-color: #333;
+  }
+
+  thead th {
+    background: #0d0d0d;
+    color: #fff !important;
+    border-bottom-color: #3d3d3d;
+  }
+
+  tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, .04);
+  }
+
+  tbody tr:hover {
+    background: rgba(255, 255, 255, .08);
+  }
+
+  caption {
+    color: #9aa0a6;
+  }
+}
+
+/*
+The MIT License (MIT)
+
+Copyright (c) Yuan Qing Lim
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/</style></div></main><div class="top-bar"data-js="top-bar"><button class="top-bar__menu-toggle-button"data-js="top-bar-menu-toggle-button"><svg class="top-bar__menu-toggle-button-menu-svg"viewBox="0 0 16 16"xmlns="http://www.w3.org/2000/svg"><path fill="currentColor"fill-rule="evenodd"clip-rule="evenodd"d="M0 2.75C0 2.33579.335786 2 .75 2h14.5c.4142 0 .75.33579.75.75s-.3358.75-.75.75H.75C.335786 3.5 0 3.16421 0 2.75zM0 8c0-.41421.335786-.75.75-.75h14.5c.4142 0 .75.33579.75.75s-.3358.75-.75.75H.75C.335786 8.75 0 8.41421 0 8zm.75 4.5c-.414214 0-.75.3358-.75.75s.335786.75.75.75h14.5c.4142 0 .75-.3358.75-.75s-.3358-.75-.75-.75H.75z"/></svg> <svg class="top-bar__menu-toggle-button-close-svg"viewBox="0 0 16 16"xmlns="http://www.w3.org/2000/svg"><path fill="currentColor"fill-rule="evenodd"clip-rule="evenodd"d="M1.28033.21967c-.292893-.2928933-.767767-.2928933-1.06066 0-.2928933.292893-.2928933.767767 0 1.06066L6.93934 8 .21967 14.7197c-.2928933.2929-.2928933.7677 0 1.0606.292893.2929.767767.2929 1.06066 0L8 9.06066l6.7197 6.71964c.2929.2929.7677.2929 1.0606 0 .2929-.2929.2929-.7677 0-1.0606L9.06066 8l6.71964-6.71967c.2929-.292893.2929-.767767 0-1.06066-.2929-.2928933-.7677-.2928933-1.0606 0L8 6.93934 1.28033.21967z"/></svg></button><div class="top-bar__title"><a class="top-bar__title-link"href="index.html"data-js="top-bar-title-link">Monolith v2 Documentation </a><span class="top-bar__title-version">v1.0.0</span></div><div class="top-bar__items"><ul><li><a href="#%EA%B0%9C%EC%9A%94">개요</a></li><li><a href="#do-it-yourself">Do It Yourself!</a></li><li><a href="#%EC%82%AC%EC%9A%A9%EB%B2%95">사용법</a></li><li><a href="#development">Development</a></li></ul><ul><li><a href="index.html"target="_blank">English</a></li><li><a href="/"target="_blank">Control Hub</a></li><li><a href="https://github.com/CreatOurCar/monolith"target="_blank">GitHub</a></li></ul></div></div><div class="menu"data-js="menu"><ul class="menu__links"><li><a href="index.html"target="_blank">English</a></li><li><a href="/"target="_blank">Control Hub</a></li><li><a href="https://github.com/CreatOurCar/monolith"target="_blank">GitHub</a></li></ul><ul><li><a href="#monolith-v2">Monolith v2</a><ul><li><a href="#%EA%B0%9C%EC%9A%94">개요</a><ul><li><a href="#%EA%B8%B0%EB%8A%A5">기능</a></li><li><a href="#%EB%AF%B8%EB%A6%AC%EB%B3%B4%EA%B8%B0">미리보기</a><ul><li><a href="#v1-%EB%8C%80%EB%B9%84-%EB%B3%80%EA%B2%BD%EC%82%AC%ED%95%AD">v1 대비 변경사항</a></li><li><a href="#original-vs-mini">Original vs mini</a></li></ul></li></ul></li><li><a href="#do-it-yourself">Do It Yourself!</a><ul><li><a href="#%ED%8E%8C%EC%9B%A8%EC%96%B4-%EC%97%85%EB%A1%9C%EB%93%9C">펌웨어 업로드</a></li><li><a href="#%EC%84%9C%EB%B2%84-%EC%A4%80%EB%B9%84">서버 준비</a><ul><li><ul><li><a href="#%EC%84%9C%EB%B2%84-%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD">서버 공지사항</a></li></ul></li></ul></li></ul></li><li><a href="#%EC%82%AC%EC%9A%A9%EB%B2%95">사용법</a><ul><li><a href="#tma-1">TMA-1</a><ul><li><a href="#wi-fi">Wi-Fi</a><ul><li><a href="#%EC%B4%88%EA%B8%B0-%EC%84%A4%EC%A0%95">초기 설정</a></li><li><a href="#%EC%B4%88%EA%B8%B0%ED%99%94">초기화</a></li></ul></li></ul></li><li><a href="#control-hub">Control Hub</a><ul><li><a href="#live-telemetry">Live Telemetry</a><ul><li><a href="#console">Console</a></li></ul></li><li><a href="#data-viewer">Data Viewer</a></li><li><a href="#ui-configuration">UI Configuration</a><ul><li><a href="#importexport">Import/Export</a></li><li><a href="#display">Display</a></li><li><a href="#units">Units</a></li><li><a href="#digital">Digital</a></li><li><a href="#analog">Analog</a></li><li><a href="#can">CAN</a></li></ul></li><li><a href="#device-configuration">Device Configuration</a><ul><li><a href="#server">Server</a></li><li><a href="#device">Device</a></li><li><a href="#inputs">Inputs</a></li><li><a href="#can-1">CAN</a></li><li><a href="#gps">GPS</a></li><li><a href="#danger-zone">Danger Zone</a></li><li><a href="#data-downloader">Data Downloader</a></li></ul></li></ul></li></ul></li><li><a href="#development">Development</a></li></ul></li></ul></div><script>(()=>{"use strict";function t(t,e){for(;null!==t&&!0!==e(t);)t=t.parentElement;return t}function e(t){const{activeClassName:e,contentElement:o,menuElement:i,scrollMarginTopOffset:l,topBarElement:r}=t;function c(){return Array.prototype.slice.call(o.querySelectorAll("[id]"))}function u(){const t=c(),e=t[t.length-1],n=window.innerHeight-(r.offsetHeight+l)-(o.offsetHeight-e.offsetTop);n<0?o.removeAttribute("style"):o.style.paddingBottom=`${n}px`}let s;u(),window.addEventListener("resize",(function(){window.clearTimeout(s),s=window.setTimeout((function(){u()}),200)})),window.addEventListener("scroll",(function(){const t=c(),o=function(t){const{idElements:e,scrollMarginTop:n}=t,o=e.slice().reverse(),i=window.scrollY;for(const t of o)if(t.offsetTop-n-2<=i)return t.getAttribute("id");return null}({idElements:t,scrollMarginTop:r.offsetHeight+l});n({activeClassName:e,element:i,id:o});const u=function(t){const{activeId:e,idElements:n}=t;if(null===e)return null;const o=n.findIndex((function(t){return t.getAttribute("id")===e})),i=n.slice(0,o+1).reverse().find((function(t){return"H1"===t.tagName}));if(void 0!==i)return i.getAttribute("id");const l=n.find((function(t){return"H1"===t.tagName}));if(void 0===l)return null;return l.getAttribute("id")}({activeId:o,idElements:t});n({activeClassName:e,element:r,id:u})}))}function n(t){const{element:e,id:n,activeClassName:o}=t,i=e.querySelector(`.${o}`);if(null!==i&&i.classList.remove(o),null===n)return;const l=e.querySelector(`[href="#${null===n?"":n}"]`);null!==l&&l.classList.add(o)}!function(){const n=document.querySelector('[data-js="content"]'),o=document.querySelector('[data-js="top-bar"]'),i=document.querySelector('[data-js="top-bar-menu-toggle-button"]'),l=document.querySelector('[data-js="top-bar-title-link"]'),r=document.querySelector('[data-js="menu"]');null!==i&&function(e){const{breakpoint:n,topBarMenuToggleButtonElement:o,visibleClassName:i}=e;function l(){document.body.classList.toggle(i)}o.addEventListener("click",l),window.addEventListener("click",(function(e){!1!==document.body.classList.contains(i)&&(window.innerWidth>=n||null===t(e.target,(function(t){return t===o}))&&l())})),window.addEventListener("keydown",(function(t){"Escape"===t.key&&l()}))}({breakpoint:1600,topBarMenuToggleButtonElement:i,visibleClassName:"--menu-visible"}),null!==r&&null!==l&&function(t){const{topBarTitleLinkElement:e,menuElement:n}=t;e.addEventListener("click",(function(t){!0!==t.metaKey&&!0!==t.shiftKey&&(t.preventDefault(),history.pushState("",document.title,`${window.location.pathname}${window.location.search}`),window.scrollTo({top:0}),n.scrollTo({top:0}))}))}({menuElement:r,topBarTitleLinkElement:l}),null!==r&&function(e,n){function o(t){const o=e.querySelector(`[href="${t}"]`);if(null===o)return;const i=o.getBoundingClientRect(),l=null===n?0:n.offsetHeight,r=window.innerHeight;if(i.top>=l&&i.bottom<=r)return;const c=1*window.parseFloat(window.getComputedStyle(document.documentElement).fontSize);e.scrollTo({top:Math.max(0,o.offsetTop-c)})}function i(){const t=window.location.hash;""!==t?o(t):e.scrollTo({top:0})}window.addEventListener("click",(function(n){const i=n.target;if("A"!==i.tagName)return;const l=i.getAttribute("href");null!==l&&null===t(i,(function(t){return t===e}))&&o(l)})),window.addEventListener("popstate",i),i()}(r,o),null!==r&&null!==n&&null!==o&&e({activeClassName:"--scroll-spy-active",contentElement:n,menuElement:r,scrollMarginTopOffset:40,topBarElement:o})}()})();</script></body></html>

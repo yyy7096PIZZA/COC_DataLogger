@@ -1,0 +1,227 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Monolith v2 Documentation</title><meta property="og:title"content="Monolith v2 Documentation"><meta name="twitter:title"content="Monolith v2 Documentation"><meta name="description"content="Documentation for Monolith v2"><meta property="og:description"content="Documentation for Monolith v2"><meta name="twitter:description"content="Documentation for Monolith v2"><link rel="icon"href="images\favicon.ico"><meta name="viewport"content="width=device-width,initial-scale=1"><style>*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:currentColor}html{font-size:16px;line-height:1;-webkit-text-size-adjust:100%}ol,ul{padding:0;list-style-type:none}blockquote,body,h1,h2,h3,h4,h5,h6,hr,input,li,ol,p,pre,ul{margin:0}h1,h2,h3,h4,h5,h6,th{font:inherit}a{text-decoration:none}button{display:block;padding:0;border:0;margin:0;background-color:transparent;border-radius:0}:root{--base-font-size-sm:15px;--base-font-size-md:16px;--base-font-size-lg:18px;--base-font-size-xl:20px;--border-radius:0.25rem;--color-bg-1:#fff;--color-bg-2:#f5f5f5;--color-fg-1:#000;--color-fg-2:#303030;--color-fg-3:#7f7f7f;--color-fg-4:#a6a6a6;--color-fg-5:#ccc;--color-accent:#946709;--color-addition-fg:#22863a;--color-addition-bg:#f0fff4;--color-deletion-fg:#b31d28;--color-deletion-bg:#ffeef0;--font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji';--font-family-code:SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace;--font-weight-regular:normal;--font-weight-bold:bold;--font-size-code:90%;--font-size-sm:0.8rem;--font-size-md:1rem;--line-height-sm:1.25rem;--line-height-md:1.75rem;--size-1:0.25rem;--size-2:0.5rem;--size-3:0.75rem;--size-4:1rem;--size-5:1.25rem;--size-6:1.5rem;--size-7:1.75rem;--size-8:2rem;--size-9:2.25rem;--size-10:2.5rem;--size-12:3rem;--size-16:4rem;--size-20:5rem;--size-24:6rem;--z-index-1:1;--scroll-margin-top:calc(var(--top-bar-height) + 40px);--toc-width:16rem;--top-bar-height:3rem}@media (prefers-color-scheme:dark){:root{color-scheme:dark;--color-bg-1:#000;--color-bg-2:#141414;--color-fg-1:#fff;--color-fg-2:#ccc;--color-fg-3:#7f7f7f;--color-fg-4:#595959;--color-fg-5:#333;--color-accent:#f7eab2;--color-addition-fg:#aff5b4;--color-addition-bg:#033a16;--color-deletion-fg:#ffdcd7;--color-deletion-bg:#67060c}}html{font-size:var(--base-font-size-sm)}body{background-color:var(--color-bg-1);color:var(--color-fg-1);font-family:var(--font-family)}.--menu-visible{overflow:hidden}@media (min-width:640px){html{font-size:var(--base-font-size-md)}.--menu-visible{overflow:visible}}@media (min-width:960px){html{font-size:var(--base-font-size-lg)}}@media (min-width:1280px){html{font-size:var(--base-font-size-xl)}}.content{padding:0 var(--size-4) 0 var(--size-4);font-size:var(--font-size-md);font-weight:var(--font-weight-regular);line-height:var(--line-height-md)}.content__inner{padding:var(--top-bar-height) 0 var(--size-12) 0}.content__inner>:not(pre){overflow-wrap:break-word}.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{font-weight:var(--font-weight-bold)}.content h1{margin-top:var(--size-20);margin-bottom:var(--size-4);font-size:var(--size-8);font-weight:var(--font-weight-bold);letter-spacing:-.0625rem;line-height:var(--size-10)}.content h2{margin-top:var(--size-12);font-size:var(--size-6);letter-spacing:-.03125rem;line-height:var(--size-9)}.content h3{margin-top:var(--size-8);font-size:var(--size-5);letter-spacing:-.03125rem;line-height:var(--size-8)}.content h4{margin-top:var(--size-6);font-size:var(--size-4)}.content h5{margin-top:var(--size-4);font-size:var(--size-3)}.content h6{margin-top:var(--size-4);color:var(--color-fg-2);font-size:var(--size-3);font-style:italic}.content [id]{scroll-margin-top:var(--scroll-margin-top)}.header-link{display:inline-block;padding:0 var(--size-4);color:var(--color-fg-3);font-size:var(--font-size-md);font-weight:var(--font-weight-bold)}.header-link:hover{color:var(--color-fg-2)}.content hr{width:100%;height:1px;border:0;margin-top:var(--size-12);background-color:var(--color-fg-5)}.content a:not(.header-link){color:currentColor;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:0.1875rem}.content a:not(.header-link):hover{text-decoration:none}.content a:focus-visible,.content a:focus-visible code{background-color:var(--color-fg-1);color:var(--color-bg-1);outline:0}.content__inner div p,.content__inner>blockquote,.content__inner>ol,.content__inner>p,.content__inner>table,.content__inner>ul{margin-top:var(--size-4)}.content blockquote{position:relative;padding:var(--size-2) 0 var(--size-2) var(--size-7);color:var(--color-fg-3)}.content blockquote:before{position:absolute;top:0;bottom:0;left:2px;display:block;width:1px;background-color:var(--color-fg-5);content:''}.content li{position:relative;padding-left:var(--size-7)}.content li:before{position:absolute;top:0;left:0;display:block}.content ul li:before{content:'◦'}.content ol{counter-reset:count}.content ol li{counter-increment:count}.content ol li:before{content:counter(count);font-variant-numeric:tabular-nums}.content table th{color:var(--color-fg-3)}.content img{display:inline-block;max-width:100%}.content code{padding:var(--size-1);background-color:var(--color-bg-2);border-radius:var(--border-radius);color:var(--color-fg-2);font-family:var(--font-family-code);font-size:var(--font-size-code)}.content pre{margin:var(--size-6) 0;color:var(--color-fg-2)}.content pre code{display:block;padding:var(--size-4);overflow-x:auto}.content strong{font-weight:var(--font-weight-bold)}@media (min-width:640px){.content__inner{max-width:70ch;margin:0 auto}}@media (min-width:1280px){.content{margin-left:var(--toc-width)}.content__inner{max-width:66ch}}@media (min-width:1600px){.content__inner{max-width:70ch}.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{position:relative;display:block;padding-left:var(--size-9);margin-left:calc(-1 * var(--size-9))}.header-link{position:absolute;top:0;bottom:0;left:0;display:block;padding:0 var(--size-3)}}@media (hover:hover){.header-link{opacity:0}.content h1:hover .header-link,.content h2:hover .header-link,.content h3:hover .header-link,.content h4:hover .header-link,.content h5:hover .header-link,.content h6:hover .header-link{opacity:1}}.hljs-strong{font-weight:var(--font-weight-bold)}.hljs-emphasis,.hljs-params{font-style:italic}.hljs-comment,.hljs-function,.hljs-keyword,.hljs-meta,.hljs-section,.hljs-selector-class,.hljs-selector-id,.hljs-selector-pseudo,.hljs-variable,.language-html .hljs-tag,.language-json.hljs{color:var(--color-fg-3)}.hljs,.hljs-attr,.hljs-params,.hljs-title,.language-html .hljs-tag .hljs-name,.language-js .xml .hljs-tag .hljs-name,.language-ts .xml .hljs-tag .hljs-name{color:var(--color-fg-2)}.hljs-attribute,.hljs-built_in,.hljs-builtin-name,.hljs-string,.hljs-symbol,.hljs-template-tag,.hljs-template-variable{color:var(--color-fg-1)}.hljs-bullet,.hljs-link,.hljs-literal,.hljs-name,.hljs-number,.hljs-quote,.hljs-regexp,.hljs-selector-attr,.hljs-selector-tag,.language-html .hljs-attr,.language-js .xml .hljs-attr,.language-ts .xml .hljs-attr{color:var(--color-accent)}.hljs-deletion{background-color:var(--color-deletion-bg);color:var(--color-deletion-fg)}.hljs-addition{background-color:var(--color-addition-bg);color:var(--color-addition-fg)}.menu{position:fixed;top:var(--top-bar-height);bottom:0;left:0;display:none;width:100%;padding:var(--size-3) 0;border-right:1px solid var(--color-fg-5);background-color:var(--color-bg-1);font-size:var(--font-size-md);line-height:var(--line-height-md);overflow-y:auto}.--menu-visible .menu{display:block}.menu a{position:relative;display:block;padding:var(--size-1) var(--size-4);color:var(--color-fg-3);overflow-wrap:break-word}.menu li li a{padding-left:var(--size-8)}.menu li li li a{padding-left:var(--size-12)}.menu li li li li a{padding-left:var(--size-16)}.menu li li li li li a{padding-left:var(--size-20)}.menu li li li li li li a{padding-left:var(--size-24)}.menu a:not(.--scroll-spy-active):hover{color:var(--color-fg-2)}.menu a:focus-visible{background-color:var(--color-fg-1);color:var(--color-bg-1);outline:0}.menu a[target='_blank']:after{content:' ↗'}.menu .--scroll-spy-active{color:var(--color-fg-1)}.menu code{font-family:var(--font-family-code);font-size:var(--font-size-code)}@media (min-width:960px){.menu{width:var(--toc-width);font-size:var(--font-size-sm);line-height:var(--line-height-sm)}.--no-toc .menu{display:none}.menu__links{display:none}}@media (min-width:1280px){.menu{display:block;border-right:0}}.top-bar{position:fixed;z-index:var(--z-index-1);top:0;right:0;left:0;display:flex;background-color:var(--color-bg-1);font-size:var(--font-size-md);line-height:var(--top-bar-height);overflow-x:auto;white-space:nowrap}.top-bar:before{position:fixed;top:var(--top-bar-height);right:0;left:0;display:block;height:1px;background-color:var(--color-fg-5);content:'';pointer-events:none}.top-bar a{position:relative;z-index:var(--z-index-1);display:block;padding:0 var(--size-2);color:var(--color-fg-3)}.top-bar a:not(.--scroll-spy-active):hover{color:var(--color-fg-2)}.top-bar a:focus-visible{background-color:var(--color-fg-1);color:var(--color-bg-1);outline:0}.top-bar .--scroll-spy-active{border-bottom:1px solid var(--color-fg-1);color:var(--color-fg-1)}.top-bar__menu-toggle-button{position:relative;display:flex;height:var(--top-bar-height);align-items:center;padding:0 var(--size-4);margin-right:calc(-1 * var(--size-2));color:var(--color-fg-3);cursor:pointer}.top-bar__menu-toggle-button:hover{color:var(--color-fg-2)}.top-bar__menu-toggle-button:focus{outline:0}.top-bar__menu-toggle-button:focus-visible{background-color:var(--color-fg-1);color:var(--color-bg-1);outline:0}.top-bar__menu-toggle-button-close-svg,.top-bar__menu-toggle-button-menu-svg{width:var(--font-size-md);height:var(--font-size-md)}.top-bar__menu-toggle-button-menu-svg{display:block}.--menu-visible .top-bar__menu-toggle-button-menu-svg{display:none}.top-bar__menu-toggle-button-close-svg{display:none}.--menu-visible .top-bar__menu-toggle-button-close-svg{display:block}.top-bar__title{flex-grow:1;padding-left:var(--size-2);color:var(--color-fg-3)}.top-bar .top-bar__title-link{display:inline-block}.top-bar__title-version{display:inline-block;color:var(--color-fg-4)}.top-bar__items{display:none}@media (min-width:960px){.top-bar{font-size:var(--font-size-sm)}.--no-toc .top-bar__menu-toggle-button{display:none}.top-bar__items{display:flex;padding-right:var(--size-2)}.top-bar__items>ul,.top-bar__items>ul li{display:flex}.top-bar__items a[target='_blank']:after{content:' ↗'}}@media (min-width:1280px){.top-bar__menu-toggle-button{display:none}}</style></head><body class=""><main class="content"data-js="content"><div class="content__inner"><h1 id="monolith-v2">Monolith v2<a aria-hidden class="header-link"tabindex="-1"href="#monolith-v2">#</a></h1><p><img src="images%5Cwide.jpg"alt=""></p><h2 id="overview">Overview<a aria-hidden class="header-link"tabindex="-1"href="#overview">#</a></h2><p>Monolith is a wireless data logger platform with logger hardware (a.k.a. TMA-1) and a web-based Control Hub.</p><p>The project's inspiration was to help students (me 3 years ago) participating in Formula Student and Baja easily collect data from their cars, but it can be used in any other applications, or just as an ESP32-S3 development board.</p><p>This is an open-(source &#x26; hardware) project, licensed under the 🍺<a href="https://spdx.org/licenses/Beerware.html"target="_blank"rel="nofollow">Beerware License</a> for all non-commercial use. You can find more details on the <a href="https://github.com/CreatOurCar/monolith"target="_blank"rel="nofollow">GitHub</a>.</p><h3 id="features">Features<a aria-hidden class="header-link"tabindex="-1"href="#features">#</a></h3><p>📡 Full wireless support</p><ul><li>Real-time telemetry</li><li>Download recorded data</li><li>Transmit User Events</li><li>Transmit CAN messages</li><li>Configure the device (e.g., CAN bit rate)</li></ul><p>📀 Up to 100 Hz data rate across various signals</p><ul><li>1x CAN 2.0(A/B)</li><li>1x External GPS</li><li>1x Internal 6-axis accelerometer &#x26; gyroscope</li><li>4x Digital input channels<sup>1</sup></li><li>6x Analog input channels<sup>1</sup></li><li>1x Power supply voltage sensor</li><li>1x Chip temperature sensor</li></ul><p><sup>1</sup> Not supported on mini version.</p><p>💡 Customizable web-based data analysis tool</p><p>All wireless features require a Wi-Fi connection to the Internet.</p><p>Q. But where to get it on the car?<br>A. Bring a phone with Wi-Fi hotspot on board! It will also make you available to blame the driver by calling them while driving.</p><h3 id="preview">Preview<a aria-hidden class="header-link"tabindex="-1"href="#preview">#</a></h3><h4 id="compare-with-v1">Compare with v1<a aria-hidden class="header-link"tabindex="-1"href="#compare-with-v1">#</a></h4><p><img src="images%5Ccompare.jpg"alt=""></p><ul><li>Size and build cost reduced to about 1/3.</li><li>Better performance and telemetry stability.</li><li>Wireless data download &#x26; configuration.</li><li>Remote user event &#x26; CAN message transmit.</li></ul><h4 id="original-vs-mini">Original vs mini<a aria-hidden class="header-link"tabindex="-1"href="#original-vs-mini">#</a></h4><p>The Mini version is nearly half the size of the Original, with a footprint even smaller than a credit card.</p><p>To achieve this, the digital and analog input channels have been removed. However, all other functionalities remain identical.</p><h2 id="do-it-yourself">Do It Yourself!<a aria-hidden class="header-link"tabindex="-1"href="#do-it-yourself">#</a></h2><h3 id="upload-firmware">Upload Firmware<a aria-hidden class="header-link"tabindex="-1"href="#upload-firmware">#</a></h3><ol><li>Prepare a 3.3V UART to USB converter.<ul><li>⚠️ The converter <strong>MUST</strong> have both <code>DTR</code> and <code>RTS</code> in addition to <code>RX</code> and <code>TX</code>.</li><li>⚠️ Do <strong>NOT</strong> use a converter with 5V output unless it has a 3.3V voltage selector.</li></ul></li><li>Solder a 2x3 2.54mm pin header to the board's UART connector.</li><li>Connect each pin with the following pinout:<ul><li><code>3V3</code>, <code>GND</code>, <code>DTR</code>, <code>RTS</code>: corresponding pins on the converter.</li><li><code>RX</code>, <code>TX</code>: cross-connect with the converter (<code>RX</code> ↔ <code>TX</code>).</li></ul></li><li>Download and unzip <code>monolith-{version}.zip</code> from the <a href="https://github.com/CreatOurCar/monolith/releases/latest"target="_blank"rel="nofollow">Release</a>.</li><li>Run <code>flash.sh</code> (Linux/macOS) or <code>flash.bat</code> (Windows).<ul><li><code>python</code> is required to execute.</li></ul></li></ol><h3 id="prepare-server">Prepare Server<a aria-hidden class="header-link"tabindex="-1"href="#prepare-server">#</a></h3><p>The TMA-1 and the Control Hub need an MQTT server (broker) to communicate.</p><p>We self-host the broker on our local network. Follow the guide below to deploy your own.</p><details><summary>I want to set up the server on my own.</summary><h4>Deploy (Optional)</h4><p>If you want to stay away from me, use a commercial MQTT broker service or deploy your own server by following the guide below.</p><p>Here, I'll assume you have experience with server things. (DNS records, firewalls, etc.).</p><p><em><strong>Prerequisites</strong></em>: A Linux machine with <a href="https://docs.docker.com/engine/install/"target="_blank"rel="nofollow">Docker Engine</a> and <a href="https://nodejs.org/en/download"target="_blank"rel="nofollow">Node.js</a>. Don't have one? Go get <a href="https://www.oracle.com/cloud/free/"target="_blank"rel="nofollow">one</a>.</p><p>It is <em>theoretically</em> possible to run with Docker Desktop and a Windows machine, but I haven't tried it.</p><p>Run the commands below, and don't forget to replace <code>&#x3C;YOUR_CHANNEL_NAME></code> with a cool name.</p><pre><code class="hljs language-sh">sudo apt install -y mosquitto
+git <span class="hljs-built_in">clone</span> https://github.com/CreatOurCar/monolith.git
+
+<span class="hljs-built_in">cd</span> monolith/web
+npm install
+npm run build
+
+<span class="hljs-built_in">cd</span> ../server/config
+<span class="hljs-comment"># set your channel key as the password</span>
+mosquitto_passwd -c mosquitto.passwd &#x3C;YOUR_CHANNEL_NAME>
+
+<span class="hljs-built_in">cd</span> ..
+<span class="hljs-built_in">cp</span> .env.example .<span class="hljs-built_in">env</span>
+vi .<span class="hljs-built_in">env</span> <span class="hljs-comment"># set `ACME_EMAIL` and `DOMAIN_NAME` to your own</span>
+
+sudo docker compose up -d
+</code></pre><h5 id="server-announcement">Server Announcement<a aria-hidden class="header-link"tabindex="-1"href="#server-announcement">#</a></h5><p>Set the <code>ANNOUNCEMENT</code> environment variable in the <code>.env</code> file to display a notice popup when users open the Control Hub.</p><pre><code class="hljs language-sh">ANNOUNCEMENT=Scheduled maintenance: 2025-01-15 02:00 ~ 04:00 (UTC)
+</code></pre></details><h2 id="usage">Usage<a aria-hidden class="header-link"tabindex="-1"href="#usage">#</a></h2><h3 id="device-tma-1">Device (TMA-1)<a aria-hidden class="header-link"tabindex="-1"href="#device-tma-1">#</a></h3><h4 id="wi-fi">Wi-Fi<a aria-hidden class="header-link"tabindex="-1"href="#wi-fi">#</a></h4><p>TMA-1 requires a 2.4GHz Wi-Fi connection to provide wireless features such as live telemetry and remote record downloads.</p><p>However, the data logging function works without Wi-Fi. To use it offline, remove the SD card and mount it on your computer after driving.</p><p>TMA-1 automatically sets its internal clock via SNTP, so you must connect it to the Internet at least once for time synchronization.</p><h5 id="initial-setup">Initial Setup<a aria-hidden class="header-link"tabindex="-1"href="#initial-setup">#</a></h5><ol><li>Power up the device.</li><li>On first boot, it creates its own Wi-Fi access point (AP) named <code>Monolith v2 XXXXXX</code>. Password is <code>monolith</code>.</li><li>Connect to that AP. The setup page will automatically open in your browser. If it doesn't, navigate to <a href="http://192.168.4.1"target="_blank"rel="nofollow">http://192.168.4.1</a> manually.<br><img src="images%5Cap.png"alt=""></li><li>Set <code>Wi-Fi SSID</code> and <code>Wi-Fi Password</code> to the phone's Wi-Fi Hotspot that TMA-1 will connect to while driving (the phone that the driver will bring onboard).</li><li>Set <code>Server Address</code> to your server.</li><li>Set <code>Device Name</code> and <code>Device Key</code> to match your server's channel name and key.</li><li>Click <code>Save</code>, then click <code>Reboot</code>.</li></ol><p>TMA-1 will try to connect to the configured Wi-Fi network after rebooting.</p><h5 id="reset">Reset<a aria-hidden class="header-link"tabindex="-1"href="#reset">#</a></h5><p>To reset the Wi-Fi and server configuration, hold the reset button for 3 seconds and release. This restores Wi-Fi, server, device name/key, and all configuration data to factory defaults.</p><p>After reset, proceed to the <code>Initial Setup</code> step above.</p><h3 id="control-hub">Control Hub<a aria-hidden class="header-link"tabindex="-1"href="#control-hub">#</a></h3><p>Control Hub is the web app served from your own server (see <code>Prepare Server</code> above).</p><h4 id="live-telemetry">Live Telemetry<a aria-hidden class="header-link"tabindex="-1"href="#live-telemetry">#</a></h4><p>Before using Live Telemetry, set the server information in the <code>Device Configuration</code> tab.</p><p>Also, to view the incoming CAN data, you need to set the CAN Decoders in the <code>UI Configuration</code> tab first.</p><p>Once the server is configured correctly and the TMA-1 is online, there is nothing else to do here. Everything will work like magic.</p><p>The GPS card shows live position data with a <code>Fix</code> / <code>No Fix</code> tag indicating satellite lock status. You can switch the trail visualization between <code>Speed</code> mode (green=slow, red=fast) and <code>Time</code> mode (indigo=old, green=recent).</p><h5 id="console">Console<a aria-hidden class="header-link"tabindex="-1"href="#console">#</a></h5><p>You can send a user event or a CAN message to the device.</p><p><img src="images%5Cconsole.png"alt=""></p><ul><li><p>User Events</p><ul><li>A user event marks some meaningful points that can help with later data review.</li><li>To send a user event, fill in the event name and click the send button.</li><li>If the event name is empty, it will be recorded as <code>USREVT</code>.</li><li>Only ASCII characters up to 16 bytes are allowed.</li></ul></li><li><p>CAN message</p><ul><li>Enter the CAN message ID (11/29 bits) and the data bytes to send.</li><li>Click the send button. <code>0x00</code> will be sent for the empty data byte fields.</li></ul></li></ul><h4 id="data-viewer">Data Viewer<a aria-hidden class="header-link"tabindex="-1"href="#data-viewer">#</a></h4><p>To review your drive, you need to download the recorded data first. Refer to the <code>Data Downloader</code> section in the <code>Device Configuration</code> tab to download data.</p><ul><li>Click <code>Select</code> and open a <code>*.log</code> file that you've downloaded.</li><li>In the <code>Graph</code> card, toggle the input category button or the signal name of the legend to see the graph.</li><li>The <code>GPS</code> card displays the vehicle's trajectory with a color gradient trail. Switch between <code>Speed</code> (green=slow, red=fast) and <code>Time</code> (indigo=old, green=recent) modes. Use the slider to scrub through the data and view position, speed, and heading at any point.</li><li>The <code>CAN</code> card displays statistics for all recorded CAN messages: message ID, total count, average interval (Hz / ms), DLC, and last data bytes.</li></ul><p>To view the recorded CAN data, set the CAN Decoders in the <code>UI Configuration</code> tab first.</p><h4 id="ui-configuration">UI Configuration<a aria-hidden class="header-link"tabindex="-1"href="#ui-configuration">#</a></h4><p>You can adjust the visibility of the cards in the Live Telemetry and the Data Viewer. Also, you can set the input signal's name, unit and value multipliers.</p><p>Refresh the page for the changes to take effect.</p><h5 id="importexport">Import/Export<a aria-hidden class="header-link"tabindex="-1"href="#importexport">#</a></h5><p>Export/import the current UI configuration across devices/browsers.</p><h5 id="display">Display<a aria-hidden class="header-link"tabindex="-1"href="#display">#</a></h5><p>Control the visibility of the cards in each view.</p><h5 id="units">Units<a aria-hidden class="header-link"tabindex="-1"href="#units">#</a></h5><p>Manage custom units that can be used for analog and CAN data.</p><h5 id="digital">Digital<a aria-hidden class="header-link"tabindex="-1"href="#digital">#</a></h5><p>This section enables you to change the channel name. (e.g., <code>RUINED IF ON</code> instead of <code>DIN1</code>)</p><h5 id="analog">Analog<a aria-hidden class="header-link"tabindex="-1"href="#analog">#</a></h5><p><img src="images%5Canalog_ui.png"alt=""></p><ul><li><code>Name</code>: The name shown on the graphs.</li><li><code>Voltage Divider</code>: Turn on if the channel's input is divided by half.</li><li><code>Multiplier</code>: The number multiplied to the measured voltage. Edit it if you have:<ul><li>Another voltage divider circuit for the sensor.</li><li>A formula to calculate the original physical value.</li></ul></li><li><code>Unit</code>: An appropriate unit of the value. Add one at the <code>Units</code> card if you don't have it.</li></ul><h5 id="can">CAN<a aria-hidden class="header-link"tabindex="-1"href="#can">#</a></h5><p>Manage CAN message decoders. A decoder extracts useful data from the CAN message bytes.</p><p><img src="images%5Ccan_decoder.png"alt=""></p><ul><li><code>Name</code>: The name shown on the graphs.</li><li><code>CAN Message ID</code>: The message ID that desired data is included.</li><li><code>Multiplier</code>: The number multiplied to the original value.</li><li><code>Offset</code>: The number added after multiplication. Final value is <code>multiplier × original + offset</code>. Default is <code>0</code>.</li><li><code>Unit</code>: The data unit that added on the <code>Units</code> card.</li><li><code>Data Range</code>: The part of the CAN payload that contains the data.<ul><li>The CAN payload has a maximum length of 8 bytes.<ul><li><code>Byte</code> mode: The possible range is #0 to #7.</li><li><code>Bit</code> mode: The possible range is #0 to #63.</li><li>To select a single byte/bit, set the start and end range to the same value.</li></ul></li></ul></li><li><code>Data Signedness</code><ul><li><code>Unsigned</code>: Decode the data as an unsigned value.</li><li><code>Signed</code>: Decode the data as a 2's complement value.</li></ul></li><li><code>Data Endianness</code><ul><li>Only available in <code>Byte</code> mode.</li><li>Defines the endianness of multi-byte data.</li></ul></li><li><code>Data Filter</code> / <code>Data Mask</code> (optional): Hex values to filter CAN messages by payload content. Only messages where <code>(data &#x26; mask) == filter</code> are decoded. Both must be specified together or left empty.</li></ul><h4 id="device-configuration">Device Configuration<a aria-hidden class="header-link"tabindex="-1"href="#device-configuration">#</a></h4><p>This section configures the server for the Control Hub and the device peripherals.</p><p>The configurations will be automatically loaded if the device is online.</p><h5 id="server">Server<a aria-hidden class="header-link"tabindex="-1"href="#server">#</a></h5><ul><li><code>Address</code>: The server for the Control Hub.</li><li><code>Name</code> / <code>Key</code>: Channel name and key.</li></ul><p>All values must match the values configured to the device during the <code>Device - Initial Setup</code> sequence.</p><p>The server will be automatically connected after you click the save button.</p><h5 id="device">Device<a aria-hidden class="header-link"tabindex="-1"href="#device">#</a></h5><ul><li><code>SSID</code> / <code>Password</code>: The Wi-Fi network that the device will connect to.</li><li><code>Timezone</code>: The POSIX timezone string for your location. Use the <a href="https://phpsecu.re/tz/"target="_blank"rel="nofollow">converter</a>'s <code>TZ_INFO</code> value.<ul><li>It is used to determine the log file name's time. Recorded logs use the UTC time, so it won't be affected.</li></ul></li><li><code>T. Interval</code>: The interval at which the device transmits telemetry.</li></ul><h5 id="inputs">Inputs<a aria-hidden class="header-link"tabindex="-1"href="#inputs">#</a></h5><p>Controls whether the digital/analog input channels are logged or not.</p><h5 id="can-1">CAN<a aria-hidden class="header-link"tabindex="-1"href="#can-1">#</a></h5><ul><li><code>Enabled</code>: Whether the CAN bus is logged or not.</li><li><code>Bit rate</code>: The bus baud rate.</li><li><code>Filter</code>: The expected message ID (11/29 bits)</li><li><code>Mask</code>: The filtering rule for each bit of the filter.<ul><li><code>0</code>: The corresponding filter bit must match to pass.</li><li><code>1</code>: The corresponding filter bit is ignored (don't care).</li></ul></li></ul><p>Refer to the <em>Acceptance Filter</em> section of the <a href="https://docs.espressif.com/projects/esp-idf/en/v6.0.1/esp32s3/api-reference/peripherals/twai.html#acceptance-filter"target="_blank"rel="nofollow">ESP32-S3 API Reference</a> for the detailed explanation of the <code>Filter</code> and <code>Mask</code>. All CAN messages will be accepted by default.</p><h5 id="gps">GPS<a aria-hidden class="header-link"tabindex="-1"href="#gps">#</a></h5><ul><li><code>Enabled</code>: Whether the GPS location is logged or not.</li><li><code>Device</code>: Select the device type. Only <code>UBLOX</code> is currently supported.</li></ul><h5 id="danger-zone"><a href="https://www.youtube.com/watch?v=siwpn14IE7E"target="_blank"rel="nofollow">Danger Zone</a><a aria-hidden class="header-link"tabindex="-1"href="#danger-zone">#</a></h5><ul><li><code>Refresh</code>: Loads the device's configuration.<ul><li>All changed configurations require a device restart to be applied.</li><li>If you refresh before restarting, the previous value will be loaded.</li></ul></li><li><code>Restart</code>: Restart the device.</li><li><code>Reset</code>: Reset the device.</li></ul><h5 id="data-downloader">Data Downloader<a aria-hidden class="header-link"tabindex="-1"href="#data-downloader">#</a></h5><p><img src="images%5Cdownloader.png"alt=""></p><ul><li><code>Load List</code>: Lists all recorded log files except the current boot session.</li><li><code>Delete All</code>: Deletes all recorded log files except the current boot session.</li></ul><p>After loading the file list, click the download button to download a specific file.</p><h2 id="development">Development<a aria-hidden class="header-link"tabindex="-1"href="#development">#</a></h2><p>This section is for computer-guys who wants to modify the software on their own.</p><details><summary>Open the magic</summary><h3>Firmware</h3><ol><li>Star the <a href="https://github.com/CreatOurCar/monolith"target="_blank"rel="nofollow">GitHub repository</a>.</li><li>Install <a href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/get-started/index.html"target="_blank"rel="nofollow">ESP-IDF</a> And run the following commands.</li></ol><pre><code>git clone https://github.com/CreatOurCar/monolith.git
+cd monolith/device/firmware
+make build
+make run   # build &#x26; flash
+</code></pre><h3>Control Hub</h3><ol><li>Star the <a href="https://github.com/CreatOurCar/monolith"target="_blank"rel="nofollow">GitHub repository</a>.</li><li>Run the following commands:</li></ol><pre><code>git clone https://github.com/CreatOurCar/monolith.git
+cd monolith/web
+npm install
+npm run vite
+npm run build
+</code></pre></details><style>body, .top-bar, .menu {
+  background-color: #f1f5f9 !important;
+  color: rgb(51, 65, 85) !important;
+}
+
+h1, h2, h3, h4, h5 {
+  color: #000!important;
+}
+
+@media (prefers-color-scheme: dark) {
+  body, .top-bar, .menu {
+    background-color: #0A0A0C !important;
+    color: rgb(209, 213, 219) !important;
+  }
+
+  h1, h2, h3, h4, h5 {
+    color: #fff !important;
+  }
+}
+
+/* Thick title font */
+.top-bar__title-link {
+  font-weight: 600;
+}
+
+/* Hide h2 headers on topbar */
+.top-bar__items ul:first-child {
+  display: none;
+}
+
+/* Hide h1 header on sidebar */
+.menu > ul:nth-child(2) > li > a,
+.menu > ul:nth-child(2) > li li li li li a {
+  display: none;
+}
+
+.menu li li a {
+  padding-left: 1rem;
+}
+
+.menu li li li a {
+  padding-left: 2rem;
+}
+
+.menu li li li li a {
+  padding-left: 3rem;
+}
+
+/* Wider content width */
+.content__inner {
+  max-width: 80ch !important;
+}
+
+/* Add dot next to the number */
+.content ol li:before {
+  content: counter(count)'.' !important
+}
+
+/* Skip number increment on ul */
+.content ul li {
+  counter-increment: none;
+}
+
+/* Better bullet for li */
+.content ul li:before {
+  content: '◦' !important
+}
+
+/* Better margins for list */
+.content ul, .content ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.content ul li, .content ol li {
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+}
+
+.content li ul li, .content li ol li {
+  margin-left: 0.5rem;
+}
+
+/* limit image width for vertical images */
+.content img {
+  max-height: 700px;
+}
+
+/* Slack style inline code block */
+.content code {
+  color: #e8912d !important;
+}
+
+/* Github style code block */
+.content pre code {
+  font-size: 0.9rem;
+  line-height: 1.2rem;
+  color: #ccc !important;
+}
+
+/* Same margin as outside details */
+.content details,
+.content details p {
+  margin-top: 1rem;
+}
+
+/* Cursor pointer for details expand */
+.content details summary {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.1875rem;
+}
+
+/* More margin at header bottom */
+.content h1, .content h2, .content h3, .content h4 {
+  margin-bottom: 1rem;
+}
+
+.content h5 {
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* Github style table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background: #f1f5f9;
+  color: #111;
+}
+
+th, td {
+  padding: 7px 12px;
+  border: 1px solid #d0d7de;
+}
+
+thead th {
+  background: #f2f2f2;
+  color: #0a0a0a !important;
+  font-weight: 600;
+  border-bottom-width: 2px;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, .03);
+}
+
+tbody tr:hover {
+  background: rgba(0, 0, 0, .06);
+}
+
+caption {
+  caption-side: bottom;
+  padding-top: .5em;
+  font-size: .875rem;
+  color: #666;
+  text-align: left;
+}
+
+@media (prefers-color-scheme: dark) {
+  table {
+    background: #09090b;
+    color: #f0f3f6;
+  }
+
+  th, td {
+    border-color: #333;
+  }
+
+  thead th {
+    background: #0d0d0d;
+    color: #fff !important;
+    border-bottom-color: #3d3d3d;
+  }
+
+  tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, .04);
+  }
+
+  tbody tr:hover {
+    background: rgba(255, 255, 255, .08);
+  }
+
+  caption {
+    color: #9aa0a6;
+  }
+}
+
+/*
+The MIT License (MIT)
+
+Copyright (c) Yuan Qing Lim
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/</style></div></main><div class="top-bar"data-js="top-bar"><button class="top-bar__menu-toggle-button"data-js="top-bar-menu-toggle-button"><svg class="top-bar__menu-toggle-button-menu-svg"viewBox="0 0 16 16"xmlns="http://www.w3.org/2000/svg"><path fill="currentColor"fill-rule="evenodd"clip-rule="evenodd"d="M0 2.75C0 2.33579.335786 2 .75 2h14.5c.4142 0 .75.33579.75.75s-.3358.75-.75.75H.75C.335786 3.5 0 3.16421 0 2.75zM0 8c0-.41421.335786-.75.75-.75h14.5c.4142 0 .75.33579.75.75s-.3358.75-.75.75H.75C.335786 8.75 0 8.41421 0 8zm.75 4.5c-.414214 0-.75.3358-.75.75s.335786.75.75.75h14.5c.4142 0 .75-.3358.75-.75s-.3358-.75-.75-.75H.75z"/></svg> <svg class="top-bar__menu-toggle-button-close-svg"viewBox="0 0 16 16"xmlns="http://www.w3.org/2000/svg"><path fill="currentColor"fill-rule="evenodd"clip-rule="evenodd"d="M1.28033.21967c-.292893-.2928933-.767767-.2928933-1.06066 0-.2928933.292893-.2928933.767767 0 1.06066L6.93934 8 .21967 14.7197c-.2928933.2929-.2928933.7677 0 1.0606.292893.2929.767767.2929 1.06066 0L8 9.06066l6.7197 6.71964c.2929.2929.7677.2929 1.0606 0 .2929-.2929.2929-.7677 0-1.0606L9.06066 8l6.71964-6.71967c.2929-.292893.2929-.767767 0-1.06066-.2929-.2928933-.7677-.2928933-1.0606 0L8 6.93934 1.28033.21967z"/></svg></button><div class="top-bar__title"><a class="top-bar__title-link"href="index.html"data-js="top-bar-title-link">Monolith v2 Documentation </a><span class="top-bar__title-version">v1.0.0</span></div><div class="top-bar__items"><ul><li><a href="#overview">Overview</a></li><li><a href="#do-it-yourself">Do It Yourself!</a></li><li><a href="#usage">Usage</a></li><li><a href="#development">Development</a></li></ul><ul><li><a href="ko.html"target="_blank">한국어</a></li><li><a href="/"target="_blank">Control Hub</a></li><li><a href="https://github.com/CreatOurCar/monolith"target="_blank">GitHub</a></li></ul></div></div><div class="menu"data-js="menu"><ul class="menu__links"><li><a href="ko.html"target="_blank">한국어</a></li><li><a href="/"target="_blank">Control Hub</a></li><li><a href="https://github.com/CreatOurCar/monolith"target="_blank">GitHub</a></li></ul><ul><li><a href="#monolith-v2">Monolith v2</a><ul><li><a href="#overview">Overview</a><ul><li><a href="#features">Features</a></li><li><a href="#preview">Preview</a><ul><li><a href="#compare-with-v1">Compare with v1</a></li><li><a href="#original-vs-mini">Original vs mini</a></li></ul></li></ul></li><li><a href="#do-it-yourself">Do It Yourself!</a><ul><li><a href="#upload-firmware">Upload Firmware</a></li><li><a href="#prepare-server">Prepare Server</a><ul><li><ul><li><a href="#server-announcement">Server Announcement</a></li></ul></li></ul></li></ul></li><li><a href="#usage">Usage</a><ul><li><a href="#device-tma-1">Device (TMA-1)</a><ul><li><a href="#wi-fi">Wi-Fi</a><ul><li><a href="#initial-setup">Initial Setup</a></li><li><a href="#reset">Reset</a></li></ul></li></ul></li><li><a href="#control-hub">Control Hub</a><ul><li><a href="#live-telemetry">Live Telemetry</a><ul><li><a href="#console">Console</a></li></ul></li><li><a href="#data-viewer">Data Viewer</a></li><li><a href="#ui-configuration">UI Configuration</a><ul><li><a href="#importexport">Import/Export</a></li><li><a href="#display">Display</a></li><li><a href="#units">Units</a></li><li><a href="#digital">Digital</a></li><li><a href="#analog">Analog</a></li><li><a href="#can">CAN</a></li></ul></li><li><a href="#device-configuration">Device Configuration</a><ul><li><a href="#server">Server</a></li><li><a href="#device">Device</a></li><li><a href="#inputs">Inputs</a></li><li><a href="#can-1">CAN</a></li><li><a href="#gps">GPS</a></li><li><a href="#danger-zone">Danger Zone</a></li><li><a href="#data-downloader">Data Downloader</a></li></ul></li></ul></li></ul></li><li><a href="#development">Development</a></li></ul></li></ul></div><script>(()=>{"use strict";function t(t,e){for(;null!==t&&!0!==e(t);)t=t.parentElement;return t}function e(t){const{activeClassName:e,contentElement:o,menuElement:i,scrollMarginTopOffset:l,topBarElement:r}=t;function c(){return Array.prototype.slice.call(o.querySelectorAll("[id]"))}function u(){const t=c(),e=t[t.length-1],n=window.innerHeight-(r.offsetHeight+l)-(o.offsetHeight-e.offsetTop);n<0?o.removeAttribute("style"):o.style.paddingBottom=`${n}px`}let s;u(),window.addEventListener("resize",(function(){window.clearTimeout(s),s=window.setTimeout((function(){u()}),200)})),window.addEventListener("scroll",(function(){const t=c(),o=function(t){const{idElements:e,scrollMarginTop:n}=t,o=e.slice().reverse(),i=window.scrollY;for(const t of o)if(t.offsetTop-n-2<=i)return t.getAttribute("id");return null}({idElements:t,scrollMarginTop:r.offsetHeight+l});n({activeClassName:e,element:i,id:o});const u=function(t){const{activeId:e,idElements:n}=t;if(null===e)return null;const o=n.findIndex((function(t){return t.getAttribute("id")===e})),i=n.slice(0,o+1).reverse().find((function(t){return"H1"===t.tagName}));if(void 0!==i)return i.getAttribute("id");const l=n.find((function(t){return"H1"===t.tagName}));if(void 0===l)return null;return l.getAttribute("id")}({activeId:o,idElements:t});n({activeClassName:e,element:r,id:u})}))}function n(t){const{element:e,id:n,activeClassName:o}=t,i=e.querySelector(`.${o}`);if(null!==i&&i.classList.remove(o),null===n)return;const l=e.querySelector(`[href="#${null===n?"":n}"]`);null!==l&&l.classList.add(o)}!function(){const n=document.querySelector('[data-js="content"]'),o=document.querySelector('[data-js="top-bar"]'),i=document.querySelector('[data-js="top-bar-menu-toggle-button"]'),l=document.querySelector('[data-js="top-bar-title-link"]'),r=document.querySelector('[data-js="menu"]');null!==i&&function(e){const{breakpoint:n,topBarMenuToggleButtonElement:o,visibleClassName:i}=e;function l(){document.body.classList.toggle(i)}o.addEventListener("click",l),window.addEventListener("click",(function(e){!1!==document.body.classList.contains(i)&&(window.innerWidth>=n||null===t(e.target,(function(t){return t===o}))&&l())})),window.addEventListener("keydown",(function(t){"Escape"===t.key&&l()}))}({breakpoint:1600,topBarMenuToggleButtonElement:i,visibleClassName:"--menu-visible"}),null!==r&&null!==l&&function(t){const{topBarTitleLinkElement:e,menuElement:n}=t;e.addEventListener("click",(function(t){!0!==t.metaKey&&!0!==t.shiftKey&&(t.preventDefault(),history.pushState("",document.title,`${window.location.pathname}${window.location.search}`),window.scrollTo({top:0}),n.scrollTo({top:0}))}))}({menuElement:r,topBarTitleLinkElement:l}),null!==r&&function(e,n){function o(t){const o=e.querySelector(`[href="${t}"]`);if(null===o)return;const i=o.getBoundingClientRect(),l=null===n?0:n.offsetHeight,r=window.innerHeight;if(i.top>=l&&i.bottom<=r)return;const c=1*window.parseFloat(window.getComputedStyle(document.documentElement).fontSize);e.scrollTo({top:Math.max(0,o.offsetTop-c)})}function i(){const t=window.location.hash;""!==t?o(t):e.scrollTo({top:0})}window.addEventListener("click",(function(n){const i=n.target;if("A"!==i.tagName)return;const l=i.getAttribute("href");null!==l&&null===t(i,(function(t){return t===e}))&&o(l)})),window.addEventListener("popstate",i),i()}(r,o),null!==r&&null!==n&&null!==o&&e({activeClassName:"--scroll-spy-active",contentElement:n,menuElement:r,scrollMarginTopOffset:40,topBarElement:o})}()})();</script></body></html>

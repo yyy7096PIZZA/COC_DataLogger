@@ -1,0 +1,24 @@
+{
+  "name": "monolith-docs",
+  "version": "1.0.0",
+  "description": "Documentation for Monolith v2",
+  "author": "luftaquila <mail@luftaquila.io>",
+  "scripts": {
+    "build": "./build.sh",
+    "live": "find . -type f -name '*.md' | entr -r ./build.sh"
+  },
+  "single-page-markdown-website": {
+    "title": "Monolith v2 Documentation",
+    "links": [
+      {
+        "text": "Control Hub",
+        "url": "/"
+      },
+      {
+        "text": "GitHub",
+        "url": "https://github.com/CreatOurCar/monolith"
+      }
+    ],
+    "faviconImage": "../web/public/favicon.ico"
+  }
+}
