@@ -11,18 +11,6 @@
 /***** 기어비 및 타이어 설정 *****/
 #define DISPLAY_GEAR_RATIO  4.02f
 
-// 노면 조건 전환: 0 = 건조, 1 = 우천
-#define DISPLAY_WET_TRACK  0
-
-#define DISPLAY_TIRE_DIAM_DRY_M  0.40f   // 건조: 지름 40cm → 둘레 1.2566m
-#define DISPLAY_TIRE_DIAM_WET_M  0.50f   // 우천: 지름 50cm → 둘레 1.5708m
-
-#if DISPLAY_WET_TRACK
-#  define DISPLAY_TIRE_CIRC_M  (3.14159265f * DISPLAY_TIRE_DIAM_WET_M)
-#else
-#  define DISPLAY_TIRE_CIRC_M  (3.14159265f * DISPLAY_TIRE_DIAM_DRY_M)
-#endif
-
 #define DISPLAY_STALE_MS     2000     // 이 시간 동안 CAN 없으면 "--" 표시
 
 /***** PCF8574 + HD44780 *****/
@@ -41,19 +29,24 @@ volatile display_can_t display_can = {0};
 /*******************************************************************************
  * PCF8574 low-level I2C write
  ******************************************************************************/
-static void pcf_write(uint8_t data) {
-  i2c_master_transmit(pcf8574_dev, &data, 1, I2C_TIMEOUT_MS);
+static esp_err_t pcf_write(uint8_t data) {
+  return i2c_master_transmit(pcf8574_dev, &data, 1, I2C_TIMEOUT_MS);
 }
 
-static void lcd_pulse_en(uint8_t data) {
-  pcf_write(data | LCD_EN);
+static esp_err_t lcd_pulse_en(uint8_t data) {
+  esp_err_t ret = pcf_write(data | LCD_EN);
+  if (ret != ESP_OK) return ret;
+
   esp_rom_delay_us(1);
-  pcf_write(data & ~LCD_EN);
+  ret = pcf_write(data & ~LCD_EN);
+  if (ret != ESP_OK) return ret;
+
   esp_rom_delay_us(50);
+  return ESP_OK;
 }
 
-static void lcd_nibble(uint8_t nibble, uint8_t flags) {
-  lcd_pulse_en((uint8_t)((nibble << 4) | LCD_BL | flags));
+static esp_err_t lcd_nibble(uint8_t nibble, uint8_t flags) {
+  return lcd_pulse_en((uint8_t)((nibble << 4) | LCD_BL | flags));
 }
 
 /* one full byte = both nibbles' EN pulses in a single 4-byte I2C transaction
@@ -61,41 +54,59 @@ static void lcd_nibble(uint8_t nibble, uint8_t flags) {
  * byte spends ~90us on the wire — longer than the HD44780's 37us execution
  * time — so no explicit delay between pulses is needed. Kept to one character
  * per transaction so the gyroscope sharing I2C0 is never blocked for long. */
-static void lcd_write8(uint8_t b, uint8_t flags) {
+static esp_err_t lcd_write8(uint8_t b, uint8_t flags) {
   uint8_t hi     = (uint8_t)((b & 0xF0) | LCD_BL | flags);
   uint8_t lo     = (uint8_t)((b << 4) | LCD_BL | flags);
   uint8_t seq[4] = { hi | LCD_EN, hi, lo | LCD_EN, lo };
-  i2c_master_transmit(pcf8574_dev, seq, sizeof(seq), I2C_TIMEOUT_MS);
+  return i2c_master_transmit(pcf8574_dev, seq, sizeof(seq), I2C_TIMEOUT_MS);
 }
 
-static void lcd_cmd(uint8_t cmd) {
-  lcd_write8(cmd, 0);
+static esp_err_t lcd_cmd(uint8_t cmd) {
+  return lcd_write8(cmd, 0);
 }
 
-static void lcd_put(uint8_t b) {
-  lcd_write8(b, LCD_RS);
+static esp_err_t lcd_put(uint8_t b) {
+  return lcd_write8(b, LCD_RS);
 }
 
-static void lcd_set_cursor(uint8_t row, uint8_t col) {
-  lcd_cmd(0x80 | (ROW_ADDR[row] + col));
+static esp_err_t lcd_set_cursor(uint8_t row, uint8_t col) {
+  return lcd_cmd(0x80 | (ROW_ADDR[row] + col));
 }
 
 /*******************************************************************************
  * LCD initialization (4-bit mode)
  ******************************************************************************/
-static void lcd_init(void) {
+static esp_err_t lcd_init(void) {
+  esp_err_t ret;
+
   vTaskDelay(pdMS_TO_TICKS(50));
 
-  lcd_nibble(0x03, 0); vTaskDelay(pdMS_TO_TICKS(5));
-  lcd_nibble(0x03, 0); esp_rom_delay_us(150);
-  lcd_nibble(0x03, 0); esp_rom_delay_us(150);
-  lcd_nibble(0x02, 0);          // 4-bit mode
+  ret = lcd_nibble(0x03, 0);
+  if (ret != ESP_OK) return ret;
+  vTaskDelay(pdMS_TO_TICKS(5));
 
-  lcd_cmd(0x28);                // 4-bit, 2-line, 5×8
-  lcd_cmd(0x0C);                // display on, cursor/blink off
-  lcd_cmd(0x06);                // increment, no display shift
-  lcd_cmd(0x01);                // clear display
+  ret = lcd_nibble(0x03, 0);
+  if (ret != ESP_OK) return ret;
+  esp_rom_delay_us(150);
+
+  ret = lcd_nibble(0x03, 0);
+  if (ret != ESP_OK) return ret;
+  esp_rom_delay_us(150);
+
+  ret = lcd_nibble(0x02, 0);    // 4-bit mode
+  if (ret != ESP_OK) return ret;
+
+  ret = lcd_cmd(0x28);          // 4-bit, 2-line, 5×8
+  if (ret != ESP_OK) return ret;
+  ret = lcd_cmd(0x0C);          // display on, cursor/blink off
+  if (ret != ESP_OK) return ret;
+  ret = lcd_cmd(0x06);          // increment, no display shift
+  if (ret != ESP_OK) return ret;
+  ret = lcd_cmd(0x01);          // clear display
+  if (ret != ESP_OK) return ret;
+
   vTaskDelay(pdMS_TO_TICKS(2));
+  return ESP_OK;
 }
 
 /*******************************************************************************
@@ -112,12 +123,18 @@ static const uint8_t CC_DEF[3][8] = {
   {0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x00},   // █
 };
 
-static void lcd_load_custom_chars(void) {
-  lcd_cmd(0x40);   // CGRAM address 0
-  for (int i = 0; i < 3; i++)
-    for (int j = 0; j < 8; j++)
-      lcd_put(CC_DEF[i][j]);
-  lcd_cmd(0x80);   // back to DDRAM
+static esp_err_t lcd_load_custom_chars(void) {
+  esp_err_t ret = lcd_cmd(0x40);  // CGRAM address 0
+  if (ret != ESP_OK) return ret;
+
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 8; j++) {
+      ret = lcd_put(CC_DEF[i][j]);
+      if (ret != ESP_OK) return ret;
+    }
+  }
+
+  return lcd_cmd(0x80);  // back to DDRAM
 }
 
 /*******************************************************************************
@@ -146,7 +163,7 @@ static const uint8_t BIG[10][2][3] = {
 static uint8_t lcd_want[4][20];
 static uint8_t lcd_frame[4][20];
 
-static void lcd_flush(void) {
+static esp_err_t lcd_flush(void) {
   for (int r = 0; r < 4; r++) {
     int c = 0;
     while (c < 20) {
@@ -155,14 +172,22 @@ static void lcd_flush(void) {
         continue;
       }
       // 바뀐 글자 구간: 커서를 한 번만 옮기고 연속으로 쓴다
-      lcd_set_cursor(r, c);
+      esp_err_t ret = lcd_set_cursor(r, c);
+      if (ret != ESP_OK) return ret;
+
       while (c < 20 && lcd_want[r][c] != lcd_frame[r][c]) {
-        lcd_put(lcd_want[r][c]);
+        ret = lcd_put(lcd_want[r][c]);
+        if (ret != ESP_OK) return ret;
+
+        // Only cache bytes that the expander accepted. A failed byte remains
+        // dirty and is sent again on the next successful refresh.
         lcd_frame[r][c] = lcd_want[r][c];
         c++;
       }
     }
   }
+
+  return ESP_OK;
 }
 
 /*******************************************************************************
@@ -187,6 +212,53 @@ static void draw_speed(int spd) {
   draw_big_digit(u, 12);
 }
 
+static void display_disconnect(void) {
+  if (pcf8574_dev == NULL) return;
+
+  i2c_master_bus_rm_device(pcf8574_dev);
+  pcf8574_dev = NULL;
+
+  // A failed transaction can leave either the expander or HD44780 part-way
+  // through a write. Never trust the framebuffer cache across a reconnect.
+  memset(lcd_frame, 0xFF, sizeof(lcd_frame));
+}
+
+static esp_err_t display_connect(i2c_master_bus_handle_t i2c0, bool *device_missing) {
+  *device_missing = false;
+
+  esp_err_t ret = i2c_master_probe(i2c0, PCF8574_ADDR, I2C_TIMEOUT_MS);
+  if (ret != ESP_OK) {
+    *device_missing = true;
+    return ret;
+  }
+
+  i2c_device_config_t dev_cfg = {
+    .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+    .device_address  = PCF8574_ADDR,
+    .scl_speed_hz    = 100000,
+  };
+
+  ret = i2c_master_bus_add_device(i2c0, &dev_cfg, &pcf8574_dev);
+  if (ret != ESP_OK) return ret;
+
+  ret = lcd_init();
+  if (ret == ESP_OK) ret = lcd_load_custom_chars();
+  if (ret != ESP_OK) {
+    display_disconnect();
+    return ret;
+  }
+
+  // lcd_init() cleared DDRAM, so a blank cache is truthful. Rebuild static
+  // content through the normal diff renderer to keep cache and LCD in sync.
+  memset(lcd_frame, ' ', sizeof(lcd_frame));
+  memset(lcd_want, ' ', sizeof(lcd_want));
+  memcpy(&lcd_want[3][8], "km/h", 4);
+
+  ret = lcd_flush();
+  if (ret != ESP_OK) display_disconnect();
+  return ret;
+}
+
 /*******************************************************************************
  * display refresh task — 1 Hz
  *
@@ -196,41 +268,75 @@ static void draw_speed(int spd) {
  * Row 3: "km/h" (written once at init)
  ******************************************************************************/
 void task_display(void *pvParameters) {
+  (void)pvParameters;
+
   i2c_master_bus_handle_t i2c0;
 
+  // I2C0 is created by the main thread whenever this task is enabled.
   if (i2c_master_get_bus_handle(I2C_NUM_0, &i2c0) != ESP_OK) {
-    ESP_LOGE("DISPLAY", "I2C0 bus not found");
+    CLEAR_FATAL(&logbuf.run, DISPLAY);
+    SET_ERROR(&logbuf.run, DISPLAY);
+    SYSLOG("SNS:LCD:ERR");
+    ESP_LOGW("DISPLAY", "I2C0 bus not found");
     vTaskDelete(NULL);
     return;
   }
 
-  i2c_device_config_t dev_cfg = {
-    .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-    .device_address  = PCF8574_ADDR,
-    .scl_speed_hz    = 100000,
-  };
+  bool online                   = false;
+  bool outage_reported          = false;
+  bool ever_online              = false;
+  uint32_t consecutive_failures = 0;
+  TickType_t tick               = xTaskGetTickCount();
 
-  if (i2c_master_bus_add_device(i2c0, &dev_cfg, &pcf8574_dev) != ESP_OK) {
-    ESP_LOGE("DISPLAY", "PCF8574 not found at 0x%02X", PCF8574_ADDR);
-    vTaskDelete(NULL);
-    return;
-  }
-
-  lcd_init();
-  lcd_load_custom_chars();
-
-  // lcd_init()의 clear로 화면은 전부 공백 — 캐시도 공백으로 맞춰서 시작
-  memset(lcd_frame, ' ', sizeof(lcd_frame));
-  memset(lcd_want, ' ', sizeof(lcd_want));
-
-  // row 3: static "km/h" label, centered at col 8 (want에만 넣으면 flush가 알아서 쓴다)
-  memcpy(&lcd_want[3][8], "km/h", 4);
-  lcd_flush();
-
-  TickType_t tick = xTaskGetTickCount();
+  // Clear the startup placeholder. A missing or unusable enabled display is
+  // immediately set back to ERROR by the first connection attempt below.
+  CLEAR_ALL(&logbuf.run, DISPLAY);
 
   while (true) {
+    if (!online) {
+      bool device_missing;
+      esp_err_t ret = display_connect(i2c0, &device_missing);
+      if (ret != ESP_OK) {
+        if (!outage_reported) {
+          bool report_error = ever_online || !device_missing;
+          SET_ERROR(&logbuf.run, DISPLAY);
+          SYSLOG(report_error ? "SNS:LCD:ERR" : "SNS:LCD:MISS");
+          if (ever_online) {
+            ESP_LOGW("DISPLAY", "device unavailable; retrying every %d ms", (int)SENSOR_RETRY_MS);
+          } else if (!device_missing) {
+            ESP_LOGW("DISPLAY", "device initialization failed; retrying every %d ms", (int)SENSOR_RETRY_MS);
+          } else {
+            ESP_LOGW("DISPLAY", "device not found; retrying every %d ms", (int)SENSOR_RETRY_MS);
+          }
+          outage_reported = true;
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(SENSOR_RETRY_MS));
+        continue;
+      }
+
+      online               = true;
+      consecutive_failures = 0;
+      CLEAR_ALL(&logbuf.run, DISPLAY);
+
+      if (outage_reported) {
+        SYSLOG("SNS:LCD:OK");
+        ESP_LOGI("DISPLAY", "device recovered");
+        outage_reported = false;
+      } else {
+        SYSLOG("SNS:LCD:OK");
+        ESP_LOGI("DISPLAY", "device ready");
+      }
+
+      ever_online = true;
+      tick        = xTaskGetTickCount();
+    }
+
     vTaskDelayUntil(&tick, pdMS_TO_TICKS(1000));
+
+    // Probe even when the framebuffer has no dirty cells, otherwise an
+    // unplugged display with static content could remain undetected forever.
+    esp_err_t ret = i2c_master_probe(i2c0, PCF8574_ADDR, I2C_TIMEOUT_MS);
 
     bool stale = !display_can.valid ||
                  (xTaskGetTickCount() - display_can.last_tick) > pdMS_TO_TICKS(DISPLAY_STALE_MS);
@@ -258,12 +364,31 @@ void task_display(void *pvParameters) {
     } else {
       float rpm = (float)display_can.ez_rpm_raw * 0.1f - 2000.0f;
       if (rpm < 0.0f) rpm = -rpm;
-      float spd_kmh = rpm / DISPLAY_GEAR_RATIO * DISPLAY_TIRE_CIRC_M * 60.0f / 1000.0f;
+      float spd_kmh = rpm / DISPLAY_GEAR_RATIO * VEHICLE_TIRE_CIRC_M * 60.0f / 1000.0f;
       int spd = (int)(spd_kmh + 0.5f);
       if (spd > 999) spd = 999;
       draw_speed(spd);
     }
 
-    lcd_flush();
+    if (ret == ESP_OK) ret = lcd_flush();
+
+    if (ret == ESP_OK) {
+      consecutive_failures = 0;
+      continue;
+    }
+
+    consecutive_failures++;
+    if (consecutive_failures < SENSOR_FAILURE_THRESHOLD) continue;
+
+    SYSLOG("SNS:LCD:ERR");
+    SET_ERROR(&logbuf.run, DISPLAY);
+    ESP_LOGW("DISPLAY", "write failed %d consecutive times; backing off for %d ms",
+             (int)SENSOR_FAILURE_THRESHOLD, (int)SENSOR_RETRY_MS);
+
+    display_disconnect();
+    online          = false;
+    outage_reported = true;
+
+    vTaskDelay(pdMS_TO_TICKS(SENSOR_RETRY_MS));
   }
 }

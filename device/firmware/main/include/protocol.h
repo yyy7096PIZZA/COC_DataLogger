@@ -7,11 +7,15 @@
 // struct definitions are a fixed compatibility contract: field renames are fine,
 // but layout / PROTOCOL_VERSION / LOG_MAGIC / checksum must not change.
 
+#include <float.h>
+#include <stddef.h>
 #include <stdint.h>
 
 /***** log protocol *****/
 #define PROTOCOL_VERSION 1
 #define LOG_MAGIC 0xAE
+#define LOG_FEATURE_DIGITAL_WHEEL_SPEED_FLOAT (1U << 0)
+#define LOG_FEATURE_SENSOR_STATUS_EVENTS      (1U << 1)
 
 typedef enum {
   LOG_TYPE_INVALID,
@@ -27,7 +31,7 @@ typedef enum {
 
 typedef struct {
   uint8_t protocol_version;
-  uint8_t _reserved[1];
+  uint8_t feature_flags;
   uint8_t mac[6];
   uint64_t boot_time;  // second since epoch
 } boot_record_t;
@@ -63,10 +67,10 @@ typedef struct {
 } analog_record_t;
 
 typedef struct {
-  uint32_t din1;
-  uint32_t din2;
-  uint32_t din3;
-  uint32_t din4;
+  float wheel_speed_fl_kmh;
+  float wheel_speed_fr_kmh;
+  float wheel_speed_rl_kmh;
+  float wheel_speed_rr_kmh;
 } digital_record_t;
 
 typedef struct {
@@ -102,5 +106,18 @@ typedef struct {
     user_event_t user_event;
   } payload;  // 16 bytes
 } log_t;
+
+// Keep the fixed 24-byte wire/storage contract while DIGITAL uses IEEE-754 float32.
+_Static_assert(LOG_TYPE_DIGITAL == 5, "LOG_TYPE_DIGITAL wire value changed");
+_Static_assert(sizeof(float) == 4 && FLT_RADIX == 2 && FLT_MANT_DIG == 24 && FLT_MAX_EXP == 128,
+  "wheel-speed log requires IEEE-754 float32");
+_Static_assert(sizeof(digital_record_t) == 16, "digital payload must remain 16 bytes");
+_Static_assert(offsetof(digital_record_t, wheel_speed_fl_kmh) == 0, "FL wheel-speed offset changed");
+_Static_assert(offsetof(digital_record_t, wheel_speed_fr_kmh) == 4, "FR wheel-speed offset changed");
+_Static_assert(offsetof(digital_record_t, wheel_speed_rl_kmh) == 8, "RL wheel-speed offset changed");
+_Static_assert(offsetof(digital_record_t, wheel_speed_rr_kmh) == 12, "RR wheel-speed offset changed");
+_Static_assert(offsetof(log_t, payload) == 8, "log payload offset changed");
+_Static_assert(sizeof(((log_t *)0)->payload) == 16, "log payload union must remain 16 bytes");
+_Static_assert(sizeof(log_t) == 24, "log record must remain 24 bytes");
 
 #endif  // PROTOCOL_H

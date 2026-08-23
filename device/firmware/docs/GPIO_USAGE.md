@@ -4,6 +4,7 @@
 - **온보드 RGB LED:** GPIO38 (v1.1 기준. 공식 문서 *"Addressable RGB LED, driven by GPIO38"*)
 - **분류 범례:** `사용중` = 현재 펌웨어가 점유 / `자유(안전)` = 제약 없이 사용 가능 / `자유(조건부)` = 스트래핑·USB·콘솔 등 주의 후 사용 / `예약·금지` = 칩에 없거나 내장 플래시·PSRAM
 - 코드 근거는 `main/` 소스 기준. 칩 제약은 ESP32-S3 / WROOM-1 N16R8 datasheet 기준.
+- 표의 `사용중`은 모든 센서가 ON인 기본 빌드 기준이다. 선택형 센서 빌드의 설정·로그 규칙은 [SENSOR_CONFIGURATION.md](SENSOR_CONFIGURATION.md)를 참고한다.
 
 | GPIO | 기능 | 분류 | 비고 | 코드 근거 |
 |:----:|------|:----:|------|-----------|
@@ -18,10 +19,10 @@
 | 8  | 미점유 | 자유(안전) | ADC1_CH7 (아날로그 확장 가능) | — |
 | 9  | I2C0 SDA — 자이로·LCD | 사용중 | 공유 버스 (MPU6050 0x68, PCF8574 0x27) | `main/main.c:231` |
 | 10 | I2C0 SCL — 자이로·LCD | 사용중 | 공유 버스 | `main/main.c:230` |
-| 11 | DIN1 디지털 입력 (ISR) | 사용중 | pull-down + ANYEDGE | `main/peripheral/digital.c:19,36` |
-| 12 | DIN2 디지털 입력 (ISR) | 사용중 | | `main/peripheral/digital.c:19,37` |
-| 13 | DIN3 디지털 입력 (ISR) | 사용중 | | `main/peripheral/digital.c:19,38` |
-| 14 | DIN4 디지털 입력 (ISR) | 사용중 | | `main/peripheral/digital.c:19,39` |
+| 11 | DIN1 디지털 입력 (ISR) — 휠스피드 FL | 사용중 | pull-down + POSEDGE | `main/peripheral/digital.c` |
+| 12 | DIN2 디지털 입력 (ISR) — 휠스피드 FR | 사용중 | | `main/peripheral/digital.c` |
+| 13 | DIN3 디지털 입력 (ISR) — 휠스피드 RL | 사용중 | | `main/peripheral/digital.c` |
+| 14 | DIN4 디지털 입력 (ISR) — 휠스피드 RR | 사용중 | | `main/peripheral/digital.c` |
 | 15 | TWAI TX (CAN) | 사용중 | CAN 트랜시버 | `main/peripheral/can.c:51` |
 | 16 | TWAI RX (CAN) | 사용중 | CAN 트랜시버 | `main/peripheral/can.c:51` |
 | 17 | UART1 TX → GPS RX | 사용중 | u-blox GPS | `main/peripheral/gps.c:64` |
@@ -86,7 +87,7 @@
 | ADS1115 모듈 ×2 | 42/47 (I2C1) | 아날로그 입력 |
 | 자이로 모듈 (MPU-6050, `0x68`) | 9/10 (I2C0) | 가속도·자이로 |
 | LCD 모듈 (PCF8574, `0x27`) | 9/10 (I2C0) | 디스플레이 |
-| 휠스피드센서 등 디지털 입력 ×4 | 11–14 | 펄스·온오프 |
+| 휠스피드센서 ×4 (FL/FR/RL/RR) | 11–14 | rising-edge 펄스 |
 | 상태 LED | 5 | 외부 LED, **장착됨** (상태 표시) |
 
 > 설정 리셋(GPIO21) 버튼은 사용하지 않아 펌웨어에서 제거함.
@@ -95,7 +96,10 @@
 
 | 사용자 센서 | GPIO / 채널 |
 |-------------|-------------|
-| 휠스피드센서 | DIN1–4 = GPIO11–14 |
+| 휠스피드센서 FL | DIN1 = GPIO11 |
+| 휠스피드센서 FR | DIN2 = GPIO12 |
+| 휠스피드센서 RL | DIN3 = GPIO13 |
+| 휠스피드센서 RR | DIN4 = GPIO14 |
 | 선형 포텐쇼미터 ×4 | ADS1115 A0~A3 (ain1~ain4) |
 | ADS1115 모듈 ×2 | GPIO42/47 (I2C1) |
 | GPS 모듈 | GPIO17/18 (UART1) |

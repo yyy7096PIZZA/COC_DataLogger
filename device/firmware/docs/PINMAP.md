@@ -3,6 +3,7 @@
 - **보드:** ESP32-S3-DevKitC-1 **v1.1** + ESP32-S3-WROOM-1 **N16R8**
 - **기준:** `device/firmware/main/` 소스 코드 (코드 대조 검증 2026-07-02)
 - **이 문서는 "손으로 직접 배선해야 하는 핀"만 담은 체크리스트입니다.** 보드 온보드 부품, 칩 내부 자동 동작, ESP-IDF 기본 점유(USB로만 접근) 항목은 메인 표에서 제외하고 맨 아래 [배선 불필요(참고)](#배선-불필요-참고)에 따로 모았습니다.
+- 표는 모든 센서가 ON인 기본 빌드 기준이다. 센서별 OFF 설정과 SD 상태 이벤트는 [SENSOR_CONFIGURATION.md](SENSOR_CONFIGURATION.md)를 참고한다.
 
 ## 구성품 구분 — 내장 / 외부 추가 / 사용 센서
 
@@ -31,7 +32,7 @@
 | ADS1115 모듈 ×2 | I2C1 | 42/47 | 아날로그 입력 (포텐쇼미터) |
 | 자이로 모듈 (MPU-6050, `0x68`) | I2C0 | 9/10 | 가속도·자이로 |
 | LCD 모듈 (PCF8574+HD44780, `0x27`) | I2C0 | 9/10 | 디스플레이 |
-| 휠스피드센서 등 디지털 입력 ×4 | GPIO In | 11–14 | 펄스·온오프 |
+| 휠스피드센서 ×4 (FL/FR/RL/RR) | GPIO In | 11–14 | rising-edge 펄스 |
 | 상태 LED | GPIO OD | 5 | **장착 완료** (외부 LED, 이미 결선). 상태 표시 |
 
 > I2C0(GPIO9/10) 한 버스에 자이로(`0x68`)·LCD(`0x27`) 두 모듈이 병렬로 붙습니다.
@@ -41,7 +42,10 @@
 
 | 사용자 센서 | 연결 방식 | GPIO / 채널 |
 |-------------|-----------|-------------|
-| 휠스피드센서 | 디지털 입력 DIN1–4 | GPIO11–14 |
+| 휠스피드센서 FL | 디지털 입력 DIN1 | GPIO11 |
+| 휠스피드센서 FR | 디지털 입력 DIN2 | GPIO12 |
+| 휠스피드센서 RL | 디지털 입력 DIN3 | GPIO13 |
+| 휠스피드센서 RR | 디지털 입력 DIN4 | GPIO14 |
 | 선형 포텐쇼미터 ×4 | ADS1115 모듈 A채널 | adc1 A0~A3 (ain1~ain4) |
 | ADS1115 모듈 ×2 | I2C1 | GPIO42/47 |
 | GPS 모듈 | UART1 | GPIO17/18 |
@@ -56,10 +60,10 @@
 |:----:|-----------|------|-----------|-----------|
 | 9  | I2C0 SDA        | SDA       | 자이로·LCD 공유 버스       | `main/main.c:231` |
 | 10 | I2C0 SCL        | SCL       | 자이로·LCD 공유 버스       | `main/main.c:230` |
-| 11 | GPIO In (ISR)   | DIN1      | 디지털 입력 1 (휠스피드 등) | `main/peripheral/digital.c:19,36` |
-| 12 | GPIO In (ISR)   | DIN2      | 디지털 입력 2             | `main/peripheral/digital.c:19,37` |
-| 13 | GPIO In (ISR)   | DIN3      | 디지털 입력 3             | `main/peripheral/digital.c:19,38` |
-| 14 | GPIO In (ISR)   | DIN4      | 디지털 입력 4             | `main/peripheral/digital.c:19,39` |
+| 11 | GPIO In (ISR)   | DIN1      | 휠스피드센서 FL (앞 왼쪽)   | `main/peripheral/digital.c` |
+| 12 | GPIO In (ISR)   | DIN2      | 휠스피드센서 FR (앞 오른쪽) | `main/peripheral/digital.c` |
+| 13 | GPIO In (ISR)   | DIN3      | 휠스피드센서 RL (뒤 왼쪽)   | `main/peripheral/digital.c` |
+| 14 | GPIO In (ISR)   | DIN4      | 휠스피드센서 RR (뒤 오른쪽) | `main/peripheral/digital.c` |
 | 15 | TWAI (CAN) TX   | CAN TX    | CAN 트랜시버              | `main/peripheral/can.c:51` |
 | 16 | TWAI (CAN) RX   | CAN RX    | CAN 트랜시버              | `main/peripheral/can.c:51` |
 | 17 | UART1 TX        | → GPS RX  | u-blox GPS                | `main/peripheral/gps.c:64` |
@@ -135,9 +139,12 @@ I2C는 버스라 두 모듈이 SDA/SCL을 공유하고, **ADDR 핀 결선으로 
 
 | GPIO | 신호 | 모드 | 정의 위치 |
 |:----:|------|------|-----------|
-| 11–14 | DIN1–4 | Input + ISR (pull-down) | `main/peripheral/digital.c:19,36-39` |
+| 11 | DIN1 (FL) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
+| 12 | DIN2 (FR) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
+| 13 | DIN3 (RL) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
+| 14 | DIN4 (RR) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
 
-- 휠스피드센서 등 펄스/온오프 입력이 여기에 연결됩니다.
+- 휠스피드센서 4개(FL/FR/RL/RR)가 여기에 연결됩니다.
 
 ---
 
