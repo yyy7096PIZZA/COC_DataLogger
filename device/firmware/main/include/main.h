@@ -1,6 +1,9 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <stdbool.h>
+#include <string.h>
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/task.h"
@@ -21,6 +24,8 @@ extern volatile uint64_t boot_time_fixup_epoch;  // GPS→SD: corrected boot epo
 typedef struct {
   uint8_t mac[6];        // filled by esp_read_mac(); written into the BOOT record
   char tz[40];           // local timezone, used for the SD log filename
+  // Runtime mirror of the authoritative compile-time sensor configuration.
+  // The legacy NVS can_en/gps_en/anl_en/dgt_en keys are not read or changed.
   struct {
     uint8_t can;
     uint8_t gps;
@@ -56,8 +61,9 @@ typedef enum {
   ANALOG,
   DIGITAL,
   GYRO,
-  COMPONENT_MAX = 12,     // FATAL bits live at (component + COMPONENT_MAX); must exceed the max index (8)
-  COMPONENT_ALL = 0x01FF,  // 9 components → error bits 0-8
+  DISPLAY,
+  COMPONENT_MAX = 12,     // FATAL bits live at (component + COMPONENT_MAX); must exceed the max index (9)
+  COMPONENT_ALL = 0x03FF,  // 10 components -> error bits 0-9
 } state_component_t;
 
 #define ALL_ERROR_FATAL (COMPONENT_ALL | (COMPONENT_ALL << COMPONENT_MAX))
@@ -112,9 +118,42 @@ static inline void COPY_STATE(state_t *dest, state_t *src, state_component_t com
 /***** log protocol (wire/storage data layout — see protocol.h) *****/
 #include "protocol.h"
 
+/***** optional shared sensor snapshot for the 1 Hz debug monitor *****/
+#if DEBUG_SENSOR_MONITOR
+void debug_monitor_publish_wheels(const float speed_kmh[4], const uint32_t pulse_count[4]);
+void debug_monitor_publish_analog(const analog_record_t *sample);
+void debug_monitor_publish_gyroscope(const gyroscope_record_t *sample);
+void debug_monitor_publish_gps(const gps_record_t *sample, bool fix);
+void debug_monitor_publish_gps_fix(bool fix);
+void debug_monitor_publish_gps_online(bool online);
+void debug_monitor_publish_can_rpm(uint16_t raw);
+void debug_monitor_publish_can_soc(uint16_t raw);
+void debug_monitor_publish_sd_status(bool mounted, bool logging);
+void task_debug_monitor(void *pvParameters);
+#else
+static inline void debug_monitor_publish_wheels(const float speed_kmh[4], const uint32_t pulse_count[4]) {
+  (void)speed_kmh;
+  (void)pulse_count;
+}
+static inline void debug_monitor_publish_analog(const analog_record_t *sample) { (void)sample; }
+static inline void debug_monitor_publish_gyroscope(const gyroscope_record_t *sample) { (void)sample; }
+static inline void debug_monitor_publish_gps(const gps_record_t *sample, bool fix) {
+  (void)sample;
+  (void)fix;
+}
+static inline void debug_monitor_publish_gps_fix(bool fix) { (void)fix; }
+static inline void debug_monitor_publish_gps_online(bool online) { (void)online; }
+static inline void debug_monitor_publish_can_rpm(uint16_t raw) { (void)raw; }
+static inline void debug_monitor_publish_can_soc(uint16_t raw) { (void)raw; }
+static inline void debug_monitor_publish_sd_status(bool mounted, bool logging) {
+  (void)mounted;
+  (void)logging;
+}
+#endif
+
 typedef struct {
   state_t run;      // component OK/ERROR/FATAL bitmap (see state_component_t)
-  log_t digital;    // last logged digital input state, owned by task_digital (digital.c)
+  log_t digital;    // last logged FL/FR/RL/RR wheel speeds, owned by task_digital (digital.c)
 } log_buf_t;
 
 extern log_buf_t logbuf;
@@ -150,6 +189,24 @@ static inline void SYSLOG(const char *msg) {
   strncpy(log.payload.system_event.msg, msg, sizeof(log.payload.system_event.msg));  // no need to null-terminate
   LOG(LOG_TYPE_SYSTEM, &log);
 }
+
+// sensor and status must be string literals; resulting SYSTEM payloads must fit
+// the protocol's fixed 16-byte message field (for example: SNS:ADS48:MISS).
+#define SENSOR_CFG_SYSLOG(sensor, enabled)                                      \
+  do {                                                                          \
+    _Static_assert(sizeof("CFG:" sensor ":ON") - 1 <= sizeof(system_event_t),   \
+      "sensor configuration ON event exceeds 16-byte payload");                \
+    _Static_assert(sizeof("CFG:" sensor ":OFF") - 1 <= sizeof(system_event_t),  \
+      "sensor configuration OFF event exceeds 16-byte payload");               \
+    SYSLOG((enabled) ? "CFG:" sensor ":ON" : "CFG:" sensor ":OFF");           \
+  } while (0)
+
+#define SENSOR_STATUS_SYSLOG(sensor, status)                                    \
+  do {                                                                          \
+    _Static_assert(sizeof("SNS:" sensor ":" status) - 1 <= sizeof(system_event_t), \
+      "sensor status event exceeds 16-byte payload");                          \
+    SYSLOG("SNS:" sensor ":" status);                                         \
+  } while (0)
 
 static inline void ERROR_LOG(state_t *state, state_component_t component, const char *msg) {
   SET_ERROR(state, component);

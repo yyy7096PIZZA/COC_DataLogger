@@ -70,6 +70,7 @@ restore:
  ******************************************************************************/
 static void write_batch(int fd, const log_t *batch, int n) {
   if (write(fd, batch, n * sizeof(log_t)) != (ssize_t)(n * sizeof(log_t)) && !IS_FATAL(&logbuf.run, SD)) {
+    debug_monitor_publish_sd_status(true, false);
     FATAL_LOG(&logbuf.run, SD, "write failure");
   }
 }
@@ -116,6 +117,7 @@ static void task_sdcard(void *pvParameters) {
 
     if (write_count > 0 && (write_count >= 512 || cycle_count >= 3)) {
       if (fsync(fd) != 0 && !IS_FATAL(&logbuf.run, SD)) {
+        debug_monitor_publish_sd_status(true, false);
         FATAL_LOG(&logbuf.run, SD, "fsync failure");
       }
       write_count = 0;
@@ -166,6 +168,7 @@ void sdcard_init(void) {
     FATAL_LOG(&init, SD, "mount failure");
     goto finish;
   }
+  debug_monitor_publish_sd_status(true, false);
 
   // monotonic boot counter in NVS: guarantees a unique filename even when the clock is
   // unset (boot.tv_sec == 0 → every boot would otherwise render the same "1970-..." name
@@ -205,14 +208,19 @@ void sdcard_init(void) {
     goto finish;
   }
 
+  if (fd >= 0 && logqueue != NULL) debug_monitor_publish_sd_status(true, true);
+
   INFO(SD, "log file: %s", logpath);
 
-  log_t boot_record = { 0 };  // _reserved 등 미사용 바이트가 스택 쓰레기로 기록되지 않도록 전체 0 초기화
+  log_t boot_record = { 0 };  // 미사용 payload 바이트가 스택 쓰레기로 기록되지 않도록 전체 0 초기화
   boot_record.payload.boot.protocol_version = PROTOCOL_VERSION;
+  boot_record.payload.boot.feature_flags =
+    LOG_FEATURE_DIGITAL_WHEEL_SPEED_FLOAT | LOG_FEATURE_SENSOR_STATUS_EVENTS;
   boot_record.payload.boot.boot_time        = (uint64_t)boot.tv_sec;
   memcpy(boot_record.payload.boot.mac, storage.mac, sizeof(storage.mac));
 
   if (LOG(LOG_TYPE_BOOT, &boot_record) != true) {
+    debug_monitor_publish_sd_status(true, false);
     FATAL_LOG(&init, SD, "boot record failure");
     goto finish;
   }
