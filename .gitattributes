@@ -1,0 +1,48 @@
+# 저장소에는 항상 LF로 저장. 체크아웃 시 OS에 맞게 변환.
+* text=auto
+
+# 유닉스에서 실행되는 스크립트 — 반드시 LF 유지 (CRLF면 실행 실패)
+*.sh        text eol=lf
+gradlew     text eol=lf
+Makefile    text eol=lf
+*.mk        text eol=lf
+
+# 윈도우 전용 스크립트 — CRLF 유지
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+*.ps1       text eol=crlf
+
+# 소스·설정 파일
+*.c         text
+*.h         text
+*.cpp       text
+*.hpp       text
+*.py        text
+*.md        text
+*.txt       text
+*.json      text
+*.yml       text
+*.yaml      text
+*.toml      text
+*.ini       text
+*.cfg       text
+*.csv       text
+*.svg       text
+*.html      text
+*.css       text
+*.js        text
+
+# 바이너리 — 변환 금지
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.pdf       binary
+*.zip       binary
+*.bin       binary
+*.hex       binary
+*.elf       binary
+*.dbc       binary
+*.xlsx      binary
+*.hwpx      binary
