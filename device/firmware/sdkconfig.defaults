@@ -4,3 +4,10 @@ CONFIG_TWAI_SUPPRESS_DEPRECATE_WARN=y
 CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y
 # 1 tick = 1 ms: sensor tasks sleep in ms units (analog conversion wait, CAN poll)
 CONFIG_FREERTOS_HZ=1000
+
+# Suppress deprecated TWAI driver warning (IDF v6 — legacy driver/twai.h still used)
+CONFIG_TWAI_SUPPRESS_DEPRECATE_WARN=y
+# IDF v6 binary is ~50 KB larger (managed components); use 1500 K large partition
+CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y
+# 1 tick = 1 ms: sensor tasks sleep in ms units (analog conversion wait, CAN poll)
+CONFIG_FREERTOS_HZ=1000
