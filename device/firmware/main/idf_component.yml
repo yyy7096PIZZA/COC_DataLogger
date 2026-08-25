@@ -1,5 +1,2 @@
 dependencies:
   espressif/led_strip: "*"
-
-dependencies:
-  espressif/led_strip: "*"
