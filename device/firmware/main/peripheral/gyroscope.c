@@ -3,6 +3,7 @@
 #include "driver/i2c_master.h"
 
 #define GYRO_I2C_ADDR 0x68
+#define MPU6500_WHO_AM_I 0x70
 #define GYRO_CALIBRATION_SAMPLES 32
 
 static void gyro_disconnect(i2c_master_dev_handle_t *gyro) {
@@ -13,7 +14,7 @@ static void gyro_disconnect(i2c_master_dev_handle_t *gyro) {
 }
 
 /*******************************************************************************
- * Configure the MPU6050 and recalculate its hardware gyro offsets.
+ * Configure the MPU6500 and recalculate its hardware gyro offsets.
  *
  * This is deliberately run after every reconnect: the device may have lost
  * power while the ESP32 stayed up, so its previous register contents cannot be
@@ -24,9 +25,9 @@ static esp_err_t gyro_configure_and_calibrate(i2c_master_dev_handle_t gyro) {
   uint8_t who_am_i;
   esp_err_t ret = i2c_master_transmit_receive(gyro, &reg, 1, &who_am_i, 1, I2C_TIMEOUT_MS);
   if (ret != ESP_OK) return ret;
-  if (who_am_i != GYRO_I2C_ADDR) return ESP_ERR_INVALID_RESPONSE;
+  if (who_am_i != MPU6500_WHO_AM_I) return ESP_ERR_INVALID_RESPONSE;
 
-  // MPU6050 powers up in sleep mode. Wake it explicitly on every connection,
+  // MPU6500 powers up in sleep mode. Wake it explicitly on every connection,
   // then allow its clock and sensor paths to settle before configuration.
   uint8_t wake[2] = { 0x6B, 0x01 };  // PWR_MGMT_1, internal clock / sleep off
   ret = i2c_master_transmit(gyro, wake, sizeof(wake), I2C_TIMEOUT_MS);

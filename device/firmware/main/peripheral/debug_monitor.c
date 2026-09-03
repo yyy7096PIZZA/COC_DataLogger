@@ -232,15 +232,15 @@ static void debug_monitor_print(const debug_monitor_snapshot_t *snapshot) {
 
 #if SENSOR_ENABLE_GYRO
   if (snapshot->gyroscope_valid) {
-    ESP_LOGI(DEBUG_MONITOR_TAG, "MPU6050 raw | state=%s | Accel X=%d Y=%d Z=%d | Gyro X=%d Y=%d Z=%d",
+    ESP_LOGI(DEBUG_MONITOR_TAG, "MPU6500 raw | state=%s | Accel X=%d Y=%d Z=%d | Gyro X=%d Y=%d Z=%d",
       debug_component_state(GYRO, true), (int)snapshot->gyroscope.accel_x, (int)snapshot->gyroscope.accel_y,
       (int)snapshot->gyroscope.accel_z, (int)snapshot->gyroscope.gyro_x, (int)snapshot->gyroscope.gyro_y,
       (int)snapshot->gyroscope.gyro_z);
   } else {
-    ESP_LOGI(DEBUG_MONITOR_TAG, "MPU6050 | %s", debug_component_state(GYRO, false));
+    ESP_LOGI(DEBUG_MONITOR_TAG, "MPU6500 | %s", debug_component_state(GYRO, false));
   }
 #else
-  ESP_LOGI(DEBUG_MONITOR_TAG, "MPU6050 | DISABLED");
+  ESP_LOGI(DEBUG_MONITOR_TAG, "MPU6500 | DISABLED");
 #endif
 
 #if SENSOR_ENABLE_GPS
@@ -266,19 +266,19 @@ static void debug_monitor_print(const debug_monitor_snapshot_t *snapshot) {
   const char *can_state = IS_ERROR(&logbuf.run, CAN) || IS_FATAL(&logbuf.run, CAN)
                             ? "ERROR"
                             : "OK";
-  ESP_LOGI(DEBUG_MONITOR_TAG, "CAN | state=%s", can_state);
 
   if (snapshot->motor_seen) {
     const char *motor_state = snapshot->motor.motor_valid
                                 ? "VALID"
                                 : (snapshot->motor.motor_rpm_valid ? "PARTIAL" : "STALE");
     ESP_LOGI(DEBUG_MONITOR_TAG,
-      "MOTOR1 | state=%s | Bus=%.1fV %.1fA Phase=%.1fA RPM=%.0f rpm_valid=%s",
-      motor_state, (double)snapshot->motor.bus_voltage, (double)snapshot->motor.bus_current,
-      (double)snapshot->motor.phase_current, (double)snapshot->motor.rpm,
-      snapshot->motor.motor_rpm_valid ? "YES" : "NO");
+      "CAN | state=%s | Motor=%s RPM=%.0f rpm_valid=%s | Bus=%.1fV Current=%.1fA Phase=%.1fA",
+      can_state, motor_state, (double)snapshot->motor.rpm,
+      snapshot->motor.motor_rpm_valid ? "YES" : "NO",
+      (double)snapshot->motor.bus_voltage, (double)snapshot->motor.bus_current,
+      (double)snapshot->motor.phase_current);
     ESP_LOGI(DEBUG_MONITOR_TAG,
-      "MOTOR2 | Ctrl=%dC Motor=%dC Accel=%d Gear=%u Brake=%s Mode=%u DC=%s Err=%02X/%02X/%02X Life=%u",
+      "CAN MOTOR2 | Ctrl=%dC Motor=%dC Accel=%d Gear=%u Brake=%s Mode=%u DC=%s Err=%02X/%02X/%02X Life=%u",
       snapshot->motor.controller_temp, snapshot->motor.motor_temp, snapshot->motor.accelerator,
       (unsigned)snapshot->motor.gear, snapshot->motor.brake ? "ON" : "OFF",
       (unsigned)snapshot->motor.op_mode, snapshot->motor.dc_contactor ? "ON" : "OFF",
@@ -286,7 +286,11 @@ static void debug_monitor_print(const debug_monitor_snapshot_t *snapshot) {
       (unsigned)snapshot->motor.err_byte6,
       (unsigned)snapshot->motor.life_signal);
   } else {
-    ESP_LOGI(DEBUG_MONITOR_TAG, "MOTOR | WAITING");
+    ESP_LOGI(DEBUG_MONITOR_TAG,
+      "CAN | state=%s | Motor=WAITING RPM=N/A | Bus=N/A Current=N/A Phase=N/A",
+      can_state);
+    ESP_LOGI(DEBUG_MONITOR_TAG,
+      "CAN MOTOR2 | Ctrl=N/A Motor=N/A Accel=N/A Gear=N/A Brake=N/A Mode=N/A DC=N/A Err=N/A Life=N/A");
   }
 
   if (snapshot->bms_seen) {
