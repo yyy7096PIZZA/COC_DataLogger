@@ -22,8 +22,8 @@ typedef struct {
   analog_record_t analog;
   gyroscope_record_t gyroscope;
   gps_record_t gps;
-  uint16_t motor_rpm_raw;
-  uint16_t bms_soc_raw;
+  motor_runtime_t motor;
+  bms_runtime_t bms;
   TickType_t gps_last_fix_tick;
   bool wheel_valid;
   bool analog_valid;
@@ -31,8 +31,8 @@ typedef struct {
   bool gps_position_valid;
   bool gps_fix;
   bool gps_online;
-  bool motor_rpm_valid;
-  bool bms_soc_valid;
+  bool motor_seen;
+  bool bms_seen;
   bool sd_mounted;
   bool sd_logging;
 } debug_monitor_snapshot_t;
@@ -96,17 +96,17 @@ void debug_monitor_publish_gps_online(bool online) {
   portEXIT_CRITICAL(&debug_snapshot_lock);
 }
 
-void debug_monitor_publish_can_rpm(uint16_t raw) {
+void debug_monitor_publish_motor(const motor_runtime_t *sample) {
   portENTER_CRITICAL(&debug_snapshot_lock);
-  debug_snapshot.motor_rpm_raw   = raw;
-  debug_snapshot.motor_rpm_valid = true;
+  debug_snapshot.motor      = *sample;
+  debug_snapshot.motor_seen = true;
   portEXIT_CRITICAL(&debug_snapshot_lock);
 }
 
-void debug_monitor_publish_can_soc(uint16_t raw) {
+void debug_monitor_publish_bms(const bms_runtime_t *sample) {
   portENTER_CRITICAL(&debug_snapshot_lock);
-  debug_snapshot.bms_soc_raw   = raw;
-  debug_snapshot.bms_soc_valid = true;
+  debug_snapshot.bms      = *sample;
+  debug_snapshot.bms_seen = true;
   portEXIT_CRITICAL(&debug_snapshot_lock);
 }
 
@@ -153,6 +153,46 @@ static void debug_format_analog(char *buf, size_t size, unsigned channel, int16_
   } else {
     snprintf(buf, size, "%d", (int)value);
   }
+}
+#endif
+
+#if SENSOR_ENABLE_CAN
+static void debug_print_bms_cells(const bms_runtime_t *bms) {
+  uint8_t count = bms->cell_voltage_count;
+  if (bms->cell_string_count > 0U && bms->cell_string_count < count) count = bms->cell_string_count;
+
+  for (uint8_t start = 0; start < count; start += 12U) {
+    char line[256];
+    int used = snprintf(line, sizeof(line), "BMS CELL | ");
+    uint8_t end = start + 12U;
+    if (end > count) end = count;
+    for (uint8_t i = start; i < end && used > 0 && (size_t)used < sizeof(line); i++) {
+      used += snprintf(line + used, sizeof(line) - (size_t)used,
+                       "C%u=%umV%s", (unsigned)(i + 1U), (unsigned)bms->cell_voltage[i],
+                       i + 1U < end ? " " : "");
+    }
+    ESP_LOGI(DEBUG_MONITOR_TAG, "%s", line);
+  }
+  if (count == 0U) ESP_LOGI(DEBUG_MONITOR_TAG, "BMS CELL | N/A");
+}
+
+static void debug_print_bms_temps(const bms_runtime_t *bms) {
+  uint8_t count = bms->cell_temp_count;
+  if (bms->temp_sensor_count > 0U && bms->temp_sensor_count < count) count = bms->temp_sensor_count;
+
+  for (uint8_t start = 0; start < count; start += 12U) {
+    char line[256];
+    int used = snprintf(line, sizeof(line), "BMS TEMP | ");
+    uint8_t end = start + 12U;
+    if (end > count) end = count;
+    for (uint8_t i = start; i < end && used > 0 && (size_t)used < sizeof(line); i++) {
+      used += snprintf(line + used, sizeof(line) - (size_t)used,
+                       "T%u=%dC%s", (unsigned)(i + 1U), (int)bms->cell_temp[i],
+                       i + 1U < end ? " " : "");
+    }
+    ESP_LOGI(DEBUG_MONITOR_TAG, "%s", line);
+  }
+  if (count == 0U) ESP_LOGI(DEBUG_MONITOR_TAG, "BMS TEMP | N/A");
 }
 #endif
 
@@ -223,19 +263,79 @@ static void debug_monitor_print(const debug_monitor_snapshot_t *snapshot) {
 #endif
 
 #if SENSOR_ENABLE_CAN
-  bool can_sample_valid = snapshot->motor_rpm_valid || snapshot->bms_soc_valid;
   const char *can_state = IS_ERROR(&logbuf.run, CAN) || IS_FATAL(&logbuf.run, CAN)
                             ? "ERROR"
-                            : (can_sample_valid ? "OK" : "IDLE");
-  char motor_rpm[24] = "N/A";
-  char bms_soc[24]   = "N/A";
-  if (snapshot->motor_rpm_valid) {
-    snprintf(motor_rpm, sizeof(motor_rpm), "%.1f rpm", (double)snapshot->motor_rpm_raw * 0.1 - 2000.0);
+                            : "OK";
+  ESP_LOGI(DEBUG_MONITOR_TAG, "CAN | state=%s", can_state);
+
+  if (snapshot->motor_seen) {
+    const char *motor_state = snapshot->motor.motor_valid
+                                ? "VALID"
+                                : (snapshot->motor.motor_rpm_valid ? "PARTIAL" : "STALE");
+    ESP_LOGI(DEBUG_MONITOR_TAG,
+      "MOTOR1 | state=%s | Bus=%.1fV %.1fA Phase=%.1fA RPM=%.0f rpm_valid=%s",
+      motor_state, (double)snapshot->motor.bus_voltage, (double)snapshot->motor.bus_current,
+      (double)snapshot->motor.phase_current, (double)snapshot->motor.rpm,
+      snapshot->motor.motor_rpm_valid ? "YES" : "NO");
+    ESP_LOGI(DEBUG_MONITOR_TAG,
+      "MOTOR2 | Ctrl=%dC Motor=%dC Accel=%d Gear=%u Brake=%s Mode=%u DC=%s Err=%02X/%02X/%02X Life=%u",
+      snapshot->motor.controller_temp, snapshot->motor.motor_temp, snapshot->motor.accelerator,
+      (unsigned)snapshot->motor.gear, snapshot->motor.brake ? "ON" : "OFF",
+      (unsigned)snapshot->motor.op_mode, snapshot->motor.dc_contactor ? "ON" : "OFF",
+      (unsigned)snapshot->motor.err_byte4, (unsigned)snapshot->motor.err_byte5,
+      (unsigned)snapshot->motor.err_byte6,
+      (unsigned)snapshot->motor.life_signal);
+  } else {
+    ESP_LOGI(DEBUG_MONITOR_TAG, "MOTOR | WAITING");
   }
-  if (snapshot->bms_soc_valid) {
-    snprintf(bms_soc, sizeof(bms_soc), "%.1f %%", (double)snapshot->bms_soc_raw * 0.1);
+
+  if (snapshot->bms_seen) {
+    uint8_t valid_mask = 0;
+    for (uint8_t i = 0; i < NUM_DALY_DATA_IDS; i++) {
+      if (snapshot->bms.data_valid[i]) valid_mask |= (uint8_t)(1U << i);
+    }
+    const char *bms_state = valid_mask == 0xFFU ? "VALID" : (valid_mask != 0U ? "PARTIAL" : "STALE");
+
+    ESP_LOGI(DEBUG_MONITOR_TAG,
+      "BMS1 | state=%s cycle=%" PRIu32 " | Pack=%.1fV Gather=%.1fV Current=%.1fA SOC=%.1f%% | CellMax=%umV(#%u) CellMin=%umV(#%u) | TempMax=%dC(#%u) TempMin=%dC(#%u)",
+      bms_state, snapshot->bms.cycle_count, (double)snapshot->bms.pack_voltage,
+      (double)snapshot->bms.gather_voltage, (double)snapshot->bms.current, (double)snapshot->bms.soc,
+      (unsigned)snapshot->bms.max_cell_voltage, (unsigned)snapshot->bms.max_cell_no,
+      (unsigned)snapshot->bms.min_cell_voltage, (unsigned)snapshot->bms.min_cell_no,
+      (int)snapshot->bms.max_temp, (unsigned)snapshot->bms.max_temp_sensor_no,
+      (int)snapshot->bms.min_temp, (unsigned)snapshot->bms.min_temp_sensor_no);
+    ESP_LOGI(DEBUG_MONITOR_TAG,
+      "BMS2 | State=%u ChgMOS=%u DisMOS=%u Life=%u Remain=%" PRIu32 "mAh | Cells=%u Temps=%u Charger=%u Load=%u DIDO=0x%02X | Fault=%02X/%02X/%02X/%02X/%02X/%02X/%02X/%02X any=%s | valid=%02X",
+      (unsigned)snapshot->bms.charge_state, (unsigned)snapshot->bms.charge_mos,
+      (unsigned)snapshot->bms.discharge_mos, (unsigned)snapshot->bms.bms_life_cycles,
+      snapshot->bms.remain_capacity, (unsigned)snapshot->bms.cell_string_count,
+      (unsigned)snapshot->bms.temp_sensor_count, (unsigned)snapshot->bms.charger_connected,
+      (unsigned)snapshot->bms.load_connected, (unsigned)snapshot->bms.di_do_flags,
+      (unsigned)snapshot->bms.fault[0], (unsigned)snapshot->bms.fault[1],
+      (unsigned)snapshot->bms.fault[2], (unsigned)snapshot->bms.fault[3],
+      (unsigned)snapshot->bms.fault[4], (unsigned)snapshot->bms.fault[5],
+      (unsigned)snapshot->bms.fault[6], (unsigned)snapshot->bms.fault[7],
+      snapshot->bms.any_fault ? "YES" : "NO", (unsigned)valid_mask);
+    ESP_LOGI(DEBUG_MONITOR_TAG,
+      "BMS VALID | 90=%u 91=%u 92=%u 93=%u 94=%u 95=%u 96=%u 98=%u",
+      (unsigned)snapshot->bms.data_valid[DALY_IDX_90],
+      (unsigned)snapshot->bms.data_valid[DALY_IDX_91],
+      (unsigned)snapshot->bms.data_valid[DALY_IDX_92],
+      (unsigned)snapshot->bms.data_valid[DALY_IDX_93],
+      (unsigned)snapshot->bms.data_valid[DALY_IDX_94],
+      (unsigned)snapshot->bms.data_valid[DALY_IDX_95],
+      (unsigned)snapshot->bms.data_valid[DALY_IDX_96],
+      (unsigned)snapshot->bms.data_valid[DALY_IDX_98]);
+
+    static uint32_t last_bms_detail_cycle;
+    if (snapshot->bms.cycle_count > 0U && snapshot->bms.cycle_count != last_bms_detail_cycle) {
+      debug_print_bms_cells(&snapshot->bms);
+      debug_print_bms_temps(&snapshot->bms);
+      last_bms_detail_cycle = snapshot->bms.cycle_count;
+    }
+  } else {
+    ESP_LOGI(DEBUG_MONITOR_TAG, "BMS | WAITING");
   }
-  ESP_LOGI(DEBUG_MONITOR_TAG, "CAN | state=%s | Motor RPM=%s | BMS SOC=%s", can_state, motor_rpm, bms_soc);
 #else
   ESP_LOGI(DEBUG_MONITOR_TAG, "CAN | DISABLED");
 #endif

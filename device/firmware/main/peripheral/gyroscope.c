@@ -5,6 +5,12 @@
 #define GYRO_I2C_ADDR 0x68
 #define GYRO_CALIBRATION_SAMPLES 32
 
+static void gyro_log_failure(const char *stage, esp_err_t error) {
+  ESP_LOGW("GYRO",
+           "I2C failure: address=0x%02X stage=%s error=%s (0x%X)",
+           GYRO_I2C_ADDR, stage, esp_err_to_name(error), (unsigned)error);
+}
+
 static void gyro_disconnect(i2c_master_dev_handle_t *gyro) {
   if (*gyro == NULL) return;
 
@@ -19,23 +25,55 @@ static void gyro_disconnect(i2c_master_dev_handle_t *gyro) {
  * power while the ESP32 stayed up, so its previous register contents cannot be
  * trusted merely because it ACKs again.
  ******************************************************************************/
-static esp_err_t gyro_configure_and_calibrate(i2c_master_dev_handle_t gyro) {
+static esp_err_t gyro_configure_and_calibrate(i2c_master_dev_handle_t gyro,
+                                               uint8_t *who_am_i_out) {
   uint8_t reg = 0x75;  // WHO_AM_I
-  uint8_t who_am_i;
+  uint8_t who_am_i = 0;
   esp_err_t ret = i2c_master_transmit_receive(gyro, &reg, 1, &who_am_i, 1, I2C_TIMEOUT_MS);
-  if (ret != ESP_OK) return ret;
-  if (who_am_i != GYRO_I2C_ADDR) return ESP_ERR_INVALID_RESPONSE;
+  if (ret != ESP_OK) {
+    gyro_log_failure("who_am_i", ret);
+    return ret;
+  }
+  *who_am_i_out = who_am_i;
+  if (who_am_i != GYRO_I2C_ADDR) {
+    ret = ESP_ERR_INVALID_RESPONSE;
+    ESP_LOGW("GYRO",
+             "I2C failure: address=0x%02X stage=who_am_i error=%s (0x%X) actual=0x%02X expected=0x68",
+             GYRO_I2C_ADDR, esp_err_to_name(ret), (unsigned)ret, who_am_i);
+    return ret;
+  }
 
   // MPU6050 powers up in sleep mode. Wake it explicitly on every connection,
   // then allow its clock and sensor paths to settle before configuration.
   uint8_t wake[2] = { 0x6B, 0x00 };  // PWR_MGMT_1, internal clock / sleep off
   ret = i2c_master_transmit(gyro, wake, sizeof(wake), I2C_TIMEOUT_MS);
-  if (ret != ESP_OK) return ret;
+  if (ret != ESP_OK) {
+    gyro_log_failure("pwr_mgmt_1_wake", ret);
+    return ret;
+  }
   vTaskDelay(pdMS_TO_TICKS(100));
+
+  reg = 0x6B;
+  uint8_t pwr_mgmt_1 = 0;
+  ret = i2c_master_transmit_receive(gyro, &reg, 1, &pwr_mgmt_1, 1, I2C_TIMEOUT_MS);
+  if (ret != ESP_OK) {
+    gyro_log_failure("pwr_mgmt_1_verify", ret);
+    return ret;
+  }
+  if ((pwr_mgmt_1 & 0x40U) != 0) {
+    ret = ESP_ERR_INVALID_RESPONSE;
+    ESP_LOGW("GYRO",
+             "I2C failure: address=0x%02X stage=pwr_mgmt_1_verify error=%s (0x%X) actual=0x%02X expected_sleep_bit=0",
+             GYRO_I2C_ADDR, esp_err_to_name(ret), (unsigned)ret, pwr_mgmt_1);
+    return ret;
+  }
 
   uint8_t tx[7] = { 0x1B, 1 << 3, 1 << 4 };  // 500dps gyro, 8g accel full scale
   ret = i2c_master_transmit(gyro, tx, 3, I2C_TIMEOUT_MS);
-  if (ret != ESP_OK) return ret;
+  if (ret != ESP_OK) {
+    gyro_log_failure("range_config", ret);
+    return ret;
+  }
 
   // Clear all gyro offset registers before taking calibration samples.
   tx[0] = 0x13;  // XG_OFFSET_H register address
@@ -47,7 +85,10 @@ static esp_err_t gyro_configure_and_calibrate(i2c_master_dev_handle_t gyro) {
   tx[6] = 0;
 
   ret = i2c_master_transmit(gyro, tx, 7, I2C_TIMEOUT_MS);
-  if (ret != ESP_OK) return ret;
+  if (ret != ESP_OK) {
+    gyro_log_failure("offset_clear", ret);
+    return ret;
+  }
 
   int32_t sum_x = 0;
   int32_t sum_y = 0;
@@ -59,7 +100,13 @@ static esp_err_t gyro_configure_and_calibrate(i2c_master_dev_handle_t gyro) {
     uint8_t rx[6] = { 0 };
 
     ret = i2c_master_transmit_receive(gyro, tx, 1, rx, sizeof(rx), I2C_TIMEOUT_MS);
-    if (ret != ESP_OK) return ret;
+    if (ret != ESP_OK) {
+      ESP_LOGW("GYRO",
+               "I2C failure: address=0x%02X stage=calibration_read error=%s (0x%X) sample=%d/%d",
+               GYRO_I2C_ADDR, esp_err_to_name(ret), (unsigned)ret,
+               i + 1, GYRO_CALIBRATION_SAMPLES);
+      return ret;
+    }
 
     sum_x += (int16_t)(((uint16_t)rx[0] << 8) | rx[1]);
     sum_y += (int16_t)(((uint16_t)rx[2] << 8) | rx[3]);
@@ -81,17 +128,22 @@ static esp_err_t gyro_configure_and_calibrate(i2c_master_dev_handle_t gyro) {
   tx[5] = (uint8_t)(off_z >> 8);
   tx[6] = (uint8_t)(off_z & 0xFF);
 
-  return i2c_master_transmit(gyro, tx, 7, I2C_TIMEOUT_MS);
+  ret = i2c_master_transmit(gyro, tx, 7, I2C_TIMEOUT_MS);
+  if (ret != ESP_OK) gyro_log_failure("offset_write", ret);
+  return ret;
 }
 
 static esp_err_t gyro_connect(i2c_master_bus_handle_t i2c0,
                               i2c_master_dev_handle_t *gyro,
-                              bool *device_missing) {
+                              bool *device_missing,
+                              uint8_t *who_am_i) {
   *device_missing = false;
+  *who_am_i = 0;
 
   esp_err_t ret = i2c_master_probe(i2c0, GYRO_I2C_ADDR, I2C_TIMEOUT_MS);
   if (ret != ESP_OK) {
     *device_missing = true;
+    gyro_log_failure("address_probe", ret);
     return ret;
   }
 
@@ -102,9 +154,12 @@ static esp_err_t gyro_connect(i2c_master_bus_handle_t i2c0,
   };
 
   ret = i2c_master_bus_add_device(i2c0, &gyro_cfg, gyro);
-  if (ret != ESP_OK) return ret;
+  if (ret != ESP_OK) {
+    gyro_log_failure("add_device", ret);
+    return ret;
+  }
 
-  ret = gyro_configure_and_calibrate(*gyro);
+  ret = gyro_configure_and_calibrate(*gyro, who_am_i);
   if (ret != ESP_OK) gyro_disconnect(gyro);
 
   return ret;
@@ -141,19 +196,13 @@ void task_gyroscope(void *pvParameters) {
   while (true) {
     if (!online) {
       bool device_missing;
-      esp_err_t ret = gyro_connect(i2c0, &gyro, &device_missing);
+      uint8_t who_am_i;
+      esp_err_t ret = gyro_connect(i2c0, &gyro, &device_missing, &who_am_i);
       if (ret != ESP_OK) {
         if (!outage_reported) {
           bool report_error = ever_online || !device_missing;
           SET_ERROR(&logbuf.run, GYRO);
           SYSLOG(report_error ? "SNS:GYR:ERR" : "SNS:GYR:MISS");
-          if (ever_online) {
-            ESP_LOGW("GYRO", "device unavailable; retrying every %d ms", (int)SENSOR_RETRY_MS);
-          } else if (!device_missing) {
-            ESP_LOGW("GYRO", "device initialization failed; retrying every %d ms", (int)SENSOR_RETRY_MS);
-          } else {
-            ESP_LOGW("GYRO", "device not found; retrying every %d ms", (int)SENSOR_RETRY_MS);
-          }
           outage_reported = true;
         }
 
@@ -167,11 +216,14 @@ void task_gyroscope(void *pvParameters) {
 
       if (outage_reported) {
         SYSLOG("SNS:GYR:OK");
-        ESP_LOGI("GYRO", "device recovered");
+        ESP_LOGI("GYRO", "device recovered: address=0x%02X WHO_AM_I=0x%02X",
+                 GYRO_I2C_ADDR, who_am_i);
         outage_reported = false;
       } else {
         SYSLOG("SNS:GYR:OK");
         SYSLOG("GYR_RDY");
+        ESP_LOGI("GYRO", "device ready: address=0x%02X WHO_AM_I=0x%02X",
+                 GYRO_I2C_ADDR, who_am_i);
       }
 
       ever_online   = true;
@@ -197,13 +249,11 @@ void task_gyroscope(void *pvParameters) {
       LOG(LOG_TYPE_GYROSCOPE, &gyro_log);
     } else {
       consecutive_failures++;
+      gyro_log_failure("runtime_read_14_bytes", ret);
 
       if (consecutive_failures >= SENSOR_FAILURE_THRESHOLD) {
         SET_ERROR(&logbuf.run, GYRO);
         SYSLOG("SNS:GYR:ERR");
-        ESP_LOGW("GYRO", "read failed %d consecutive times; backing off for %d ms",
-                 (int)SENSOR_FAILURE_THRESHOLD, (int)SENSOR_RETRY_MS);
-
         gyro_disconnect(&gyro);
         online          = false;
         outage_reported = true;

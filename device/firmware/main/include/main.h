@@ -118,6 +118,76 @@ static inline void COPY_STATE(state_t *dest, state_t *src, state_component_t com
 /***** log protocol (wire/storage data layout — see protocol.h) *****/
 #include "protocol.h"
 
+/***** decoded EZkontrol motor runtime state (not part of the SD log protocol) *****/
+typedef struct {
+  float bus_voltage;
+  float bus_current;
+  float phase_current;
+  float rpm;
+  int controller_temp;
+  int motor_temp;
+  int accelerator;
+  uint8_t gear;
+  bool brake;
+  uint8_t op_mode;
+  bool dc_contactor;
+  uint8_t err_byte4;
+  uint8_t err_byte5;
+  uint8_t err_byte6;
+  uint8_t life_signal;
+  TickType_t last_motor_rx;
+  TickType_t motor_msg1_tick;
+  bool motor_msg1_ready;
+  bool motor_valid;
+  bool motor_rpm_valid;
+} motor_runtime_t;
+
+typedef enum {
+  DALY_IDX_90,
+  DALY_IDX_91,
+  DALY_IDX_92,
+  DALY_IDX_93,
+  DALY_IDX_94,
+  DALY_IDX_95,
+  DALY_IDX_96,
+  DALY_IDX_98,
+  NUM_DALY_DATA_IDS,
+} daly_data_index_t;
+
+typedef struct {
+  float pack_voltage;
+  float gather_voltage;
+  float current;
+  float soc;
+  uint16_t max_cell_voltage;
+  uint8_t max_cell_no;
+  uint16_t min_cell_voltage;
+  uint8_t min_cell_no;
+  int8_t max_temp;
+  uint8_t max_temp_sensor_no;
+  int8_t min_temp;
+  uint8_t min_temp_sensor_no;
+  uint8_t charge_state;
+  uint8_t charge_mos;
+  uint8_t discharge_mos;
+  uint8_t bms_life_cycles;
+  uint32_t remain_capacity;
+  uint8_t cell_string_count;
+  uint8_t temp_sensor_count;
+  uint8_t charger_connected;
+  uint8_t load_connected;
+  uint8_t di_do_flags;
+  uint16_t cell_voltage[DALY_MAX_CELLS];
+  uint8_t cell_voltage_count;
+  int8_t cell_temp[DALY_MAX_TEMPS];
+  uint8_t cell_temp_count;
+  uint8_t fault[8];
+  bool any_fault;
+  bool data_valid[NUM_DALY_DATA_IDS];
+  uint32_t cycle_count;
+  TickType_t last_cycle_tick;
+} bms_runtime_t;
+
 /***** optional shared sensor snapshot for the 1 Hz debug monitor *****/
 #if DEBUG_SENSOR_MONITOR
 void debug_monitor_publish_wheels(const float speed_kmh[4], const uint32_t pulse_count[4]);
@@ -126,8 +196,8 @@ void debug_monitor_publish_gyroscope(const gyroscope_record_t *sample);
 void debug_monitor_publish_gps(const gps_record_t *sample, bool fix);
 void debug_monitor_publish_gps_fix(bool fix);
 void debug_monitor_publish_gps_online(bool online);
-void debug_monitor_publish_can_rpm(uint16_t raw);
-void debug_monitor_publish_can_soc(uint16_t raw);
+void debug_monitor_publish_motor(const motor_runtime_t *sample);
+void debug_monitor_publish_bms(const bms_runtime_t *sample);
 void debug_monitor_publish_sd_status(bool mounted, bool logging);
 void task_debug_monitor(void *pvParameters);
 #else
@@ -143,8 +213,8 @@ static inline void debug_monitor_publish_gps(const gps_record_t *sample, bool fi
 }
 static inline void debug_monitor_publish_gps_fix(bool fix) { (void)fix; }
 static inline void debug_monitor_publish_gps_online(bool online) { (void)online; }
-static inline void debug_monitor_publish_can_rpm(uint16_t raw) { (void)raw; }
-static inline void debug_monitor_publish_can_soc(uint16_t raw) { (void)raw; }
+static inline void debug_monitor_publish_motor(const motor_runtime_t *sample) { (void)sample; }
+static inline void debug_monitor_publish_bms(const bms_runtime_t *sample) { (void)sample; }
 static inline void debug_monitor_publish_sd_status(bool mounted, bool logging) {
   (void)mounted;
   (void)logging;
@@ -233,10 +303,12 @@ static inline void FATAL_SYSLOG(state_t *state, state_component_t component, con
 
 /***** display CAN data snapshot (written by task_can, read by task_display) *****/
 typedef struct {
-  uint16_t   ez_rpm_raw;   // EZ 0x180117EF B6-B7 LE; rpm = raw * 0.1 - 2000
-  uint16_t   bms_soc_raw;  // Daly 0x18904001 B6-B7 BE; SOC % = raw * 0.1
-  uint8_t    valid;
-  TickType_t last_tick;
+  uint16_t   ez_rpm_raw;     // EZ 0x180117EF B6-B7 LE; rpm = raw - 32000
+  uint16_t   bms_soc_raw;    // Daly 0x18904001 B6-B7 BE; SOC % = raw * 0.1
+  uint8_t    ez_rpm_valid;
+  uint8_t    bms_soc_valid;
+  TickType_t ez_rpm_tick;
+  TickType_t bms_soc_tick;
 } display_can_t;
 
 extern volatile display_can_t display_can;

@@ -8,14 +8,26 @@
 
 #include <stdint.h>
 
-/***** CAN device IDs — 확인 필요: CAN_SIGNALS_SELECTED.md 참조 *****/
-#define CAN_EZ_SA      0xEFU
-#define CAN_EZ_MODE    0x17U   // METER=0x17, VCU=0xD0
-#define CAN_EZ_ID1     (0x18010000U | ((uint32_t)CAN_EZ_MODE << 8) | CAN_EZ_SA)   // 0x180117EF
+/***** CAN device IDs *****/
+#define CAN_EZ_ID1     0x180117EFU
+#define CAN_EZ_ID2     0x180217EFU
 #define CAN_DALY_PC    0x40U
 #define CAN_DALY_ADDR  0x01U
-#define CAN_DALY_ID(d) (0x18000000U | ((uint32_t)(d) << 16) | ((uint32_t)CAN_DALY_PC << 8) | CAN_DALY_ADDR)
-#define CAN_DALY_ID90  CAN_DALY_ID(0x90U)   // 0x18904001
+#define CAN_DALY_TX_ID(d) \
+  (0x18000000U | ((uint32_t)(d) << 16) | ((uint32_t)CAN_DALY_ADDR << 8) | CAN_DALY_PC)
+#define CAN_DALY_RX_ID(d) \
+  (0x18000000U | ((uint32_t)(d) << 16) | ((uint32_t)CAN_DALY_PC << 8) | CAN_DALY_ADDR)
+
+#define MOTOR_PAIR_WINDOW_MS 120
+#define MOTOR_RX_TIMEOUT_MS  500
+
+#define DALY_MAX_CELLS 48
+#define DALY_MAX_TEMPS 24
+#define BMS_REQ_INTERVAL_MS         120
+#define BMS_CYCLE_INTERVAL_MS      2000
+#define BMS_RESPONSE_TIMEOUT_MS     400
+#define BMS_MULTIFRAME_TIMEOUT_MS  1200
+#define BMS_INTERFRAME_GAP_MS       400
 
 /***** peripheral configs *****/
 enum {
@@ -44,7 +56,7 @@ enum {
 /***** I2C timeout *****/
 #define I2C_TIMEOUT_MS 10
 
-/***** compile-time sensor selection *****/
+  /***** compile-time sensor selection *****/
 // These switches are the authoritative source for peripheral enablement.  The
 // legacy NVS *_en keys are intentionally ignored so a flashed build behaves the
 // same on boards with different NVS contents.
@@ -65,11 +77,11 @@ enum {
 #endif
 
 #ifndef SENSOR_ENABLE_ADS48
-#define SENSOR_ENABLE_ADS48 1
+#define SENSOR_ENABLE_ADS48 0
 #endif
 
 #ifndef SENSOR_ENABLE_ADS49
-#define SENSOR_ENABLE_ADS49 1
+#define SENSOR_ENABLE_ADS49 0
 #endif
 
 // bit 0..7 = AIN1..AIN8; bit 0..3 = FL/FR/RL/RR respectively.

@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -338,8 +339,11 @@ void task_display(void *pvParameters) {
     // unplugged display with static content could remain undetected forever.
     esp_err_t ret = i2c_master_probe(i2c0, PCF8574_ADDR, I2C_TIMEOUT_MS);
 
-    bool stale = !display_can.valid ||
-                 (xTaskGetTickCount() - display_can.last_tick) > pdMS_TO_TICKS(DISPLAY_STALE_MS);
+    TickType_t now = xTaskGetTickCount();
+    bool rpm_stale = !display_can.ez_rpm_valid ||
+                     (now - display_can.ez_rpm_tick) > pdMS_TO_TICKS(DISPLAY_STALE_MS);
+    bool soc_stale = !display_can.bms_soc_valid ||
+                     (now - display_can.bms_soc_tick) > pdMS_TO_TICKS(DISPLAY_STALE_MS);
 
     memset(lcd_want, ' ', sizeof(lcd_want));
     memcpy(&lcd_want[3][8], "km/h", 4);
@@ -348,7 +352,7 @@ void task_display(void *pvParameters) {
     {
       char soc_str[12];
       int n;
-      if (stale) {
+      if (soc_stale) {
         n = 10;
         memcpy(soc_str, "SOC: --.-%", 10);
       } else {
@@ -359,11 +363,11 @@ void task_display(void *pvParameters) {
     }
 
     // Rows 1-2: vehicle speed as large digits
-    if (stale) {
+    if (rpm_stale) {
       memcpy(&lcd_want[1][6], "NO SIGNAL", 9);
     } else {
-      float rpm = (float)display_can.ez_rpm_raw * 0.1f - 2000.0f;
-      if (rpm < 0.0f) rpm = -rpm;
+      float rpm = (float)display_can.ez_rpm_raw - 32000.0f;
+      rpm = fabsf(rpm);
       float spd_kmh = rpm / DISPLAY_GEAR_RATIO * VEHICLE_TIRE_CIRC_M * 60.0f / 1000.0f;
       int spd = (int)(spd_kmh + 0.5f);
       if (spd > 999) spd = 999;
