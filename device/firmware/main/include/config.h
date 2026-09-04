@@ -20,6 +20,11 @@
 
 #define MOTOR_PAIR_WINDOW_MS 120
 #define MOTOR_RX_TIMEOUT_MS  500
+#define MOTOR_RPM_ZERO_RAW    32000U
+
+static inline float motor_decode_rpm(uint16_t raw) {
+  return (float)raw - (float)MOTOR_RPM_ZERO_RAW;
+}
 
 #define DALY_MAX_CELLS 48
 #define DALY_MAX_TEMPS 24

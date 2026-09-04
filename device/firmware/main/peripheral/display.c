@@ -19,8 +19,12 @@
 #define LCD_BL        0x08   // 백라이트 비트
 #define LCD_EN        0x04   // Enable
 #define LCD_RS        0x01   // Register Select (0=cmd, 1=data)
+#define LCD_ROWS      4
+#define LCD_COLS      16
 
-static const uint8_t ROW_ADDR[4] = {0x00, 0x40, 0x14, 0x54};
+#define DISPLAY_TEXT_COL 1
+
+static const uint8_t ROW_ADDR[LCD_ROWS] = {0x00, 0x40, 0x10, 0x50};
 
 static i2c_master_dev_handle_t pcf8574_dev;
 
@@ -111,63 +115,18 @@ static esp_err_t lcd_init(void) {
 }
 
 /*******************************************************************************
- * custom chars for 2-row big-digit font
- * 0x08-0x0A = aliases for CGRAM slots 0-2 (avoids null byte in char arrays)
- ******************************************************************************/
-#define CC_TOP  0x08   // ▀ top-half block
-#define CC_BOT  0x09   // ▄ bottom-half block
-#define CC_FUL  0x0A   // █ full block
-
-static const uint8_t CC_DEF[3][8] = {
-  {0x1F, 0x1F, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00},   // ▀
-  {0x00, 0x00, 0x00, 0x00, 0x1F, 0x1F, 0x1F, 0x00},   // ▄
-  {0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x00},   // █
-};
-
-static esp_err_t lcd_load_custom_chars(void) {
-  esp_err_t ret = lcd_cmd(0x40);  // CGRAM address 0
-  if (ret != ESP_OK) return ret;
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 8; j++) {
-      ret = lcd_put(CC_DEF[i][j]);
-      if (ret != ESP_OK) return ret;
-    }
-  }
-
-  return lcd_cmd(0x80);  // back to DDRAM
-}
-
-/*******************************************************************************
- * big-digit table: [digit][row(0=top,1=bot)][col(0..2)]
- * each digit occupies 3 chars wide × 2 rows tall
- ******************************************************************************/
-static const uint8_t BIG[10][2][3] = {
-  {{CC_FUL, CC_TOP, CC_FUL}, {CC_FUL, CC_BOT, CC_FUL}},   // 0
-  {{' ',    CC_FUL, ' '   }, {' ',    CC_FUL, ' '   }},   // 1
-  {{CC_TOP, CC_TOP, CC_FUL}, {CC_FUL, CC_BOT, CC_BOT}},   // 2
-  {{CC_TOP, CC_TOP, CC_FUL}, {CC_BOT, CC_BOT, CC_FUL}},   // 3
-  {{CC_FUL, CC_BOT, CC_FUL}, {' ',    ' ',    CC_FUL}},   // 4
-  {{CC_FUL, CC_TOP, CC_TOP}, {CC_BOT, CC_BOT, CC_FUL}},   // 5
-  {{CC_FUL, CC_TOP, CC_TOP}, {CC_FUL, CC_BOT, CC_FUL}},   // 6
-  {{CC_TOP, CC_TOP, CC_FUL}, {' ',    ' ',    CC_FUL}},   // 7
-  {{CC_FUL, CC_FUL, CC_FUL}, {CC_FUL, CC_BOT, CC_FUL}},   // 8
-  {{CC_FUL, CC_TOP, CC_FUL}, {CC_BOT, CC_BOT, CC_FUL}},   // 9
-};
-
-/*******************************************************************************
  * framebuffer diff rendering
  * lcd_want = 이번 사이클에 그리고 싶은 화면, lcd_frame = 실제 LCD에 있는 내용.
  * 달라진 글자만 I2C로 전송한다 — 매초 60자 전체 전송 대신 보통 몇 글자로 끝나
  * 같은 I2C0 버스를 쓰는 자이로(100Hz)의 대기 시간이 줄어든다.
  ******************************************************************************/
-static uint8_t lcd_want[4][20];
-static uint8_t lcd_frame[4][20];
+static uint8_t lcd_want[LCD_ROWS][LCD_COLS];
+static uint8_t lcd_frame[LCD_ROWS][LCD_COLS];
 
 static esp_err_t lcd_flush(void) {
-  for (int r = 0; r < 4; r++) {
+  for (int r = 0; r < LCD_ROWS; r++) {
     int c = 0;
-    while (c < 20) {
+    while (c < LCD_COLS) {
       if (lcd_want[r][c] == lcd_frame[r][c]) {
         c++;
         continue;
@@ -176,7 +135,7 @@ static esp_err_t lcd_flush(void) {
       esp_err_t ret = lcd_set_cursor(r, c);
       if (ret != ESP_OK) return ret;
 
-      while (c < 20 && lcd_want[r][c] != lcd_frame[r][c]) {
+      while (c < LCD_COLS && lcd_want[r][c] != lcd_frame[r][c]) {
         ret = lcd_put(lcd_want[r][c]);
         if (ret != ESP_OK) return ret;
 
@@ -191,26 +150,13 @@ static esp_err_t lcd_flush(void) {
   return ESP_OK;
 }
 
-/*******************************************************************************
- * render speed as 3 big digits into lcd_want rows 1-2
- *   hundreds → col 4-6
- *   tens     → col 8-10
- *   units    → col 12-14
- *   gaps at col 7, 11 (always space)
- ******************************************************************************/
-static void draw_big_digit(int d, int col) {
-  memcpy(&lcd_want[1][col], BIG[d][0], 3);
-  memcpy(&lcd_want[2][col], BIG[d][1], 3);
-}
+static void lcd_write_text(uint8_t row, uint8_t col, const char *text) {
+  if (row >= LCD_ROWS || col >= LCD_COLS) return;
 
-static void draw_speed(int spd) {
-  int h = spd / 100;
-  int t = (spd / 10) % 10;
-  int u = spd % 10;
-
-  if (h) draw_big_digit(h, 4);
-  if (h || t) draw_big_digit(t, 8);
-  draw_big_digit(u, 12);
+  size_t len     = strlen(text);
+  size_t max_len = LCD_COLS - col;
+  if (len > max_len) len = max_len;
+  memcpy(&lcd_want[row][col], text, len);
 }
 
 static void display_disconnect(void) {
@@ -243,7 +189,6 @@ static esp_err_t display_connect(i2c_master_bus_handle_t i2c0, bool *device_miss
   if (ret != ESP_OK) return ret;
 
   ret = lcd_init();
-  if (ret == ESP_OK) ret = lcd_load_custom_chars();
   if (ret != ESP_OK) {
     display_disconnect();
     return ret;
@@ -253,7 +198,6 @@ static esp_err_t display_connect(i2c_master_bus_handle_t i2c0, bool *device_miss
   // content through the normal diff renderer to keep cache and LCD in sync.
   memset(lcd_frame, ' ', sizeof(lcd_frame));
   memset(lcd_want, ' ', sizeof(lcd_want));
-  memcpy(&lcd_want[3][8], "km/h", 4);
 
   ret = lcd_flush();
   if (ret != ESP_OK) display_disconnect();
@@ -263,10 +207,10 @@ static esp_err_t display_connect(i2c_master_bus_handle_t i2c0, bool *device_miss
 /*******************************************************************************
  * display refresh task — 1 Hz
  *
- * Row 0: SOC% right-aligned
- * Row 1: big digit top  ┐
- * Row 2: big digit bot  ┘  vehicle speed km/h
- * Row 3: "km/h" (written once at init)
+ * Row 0: blank
+ * Row 1: SOC text
+ * Row 2: vehicle speed text
+ * Row 3: blank
  ******************************************************************************/
 void task_display(void *pvParameters) {
   (void)pvParameters;
@@ -346,33 +290,25 @@ void task_display(void *pvParameters) {
                      (now - display_can.bms_soc_tick) > pdMS_TO_TICKS(DISPLAY_STALE_MS);
 
     memset(lcd_want, ' ', sizeof(lcd_want));
-    memcpy(&lcd_want[3][8], "km/h", 4);
 
-    // Row 0: SOC%, right-aligned (e.g. "          SOC:64.3%")
-    {
-      char soc_str[12];
-      int n;
-      if (soc_stale) {
-        n = 10;
-        memcpy(soc_str, "SOC: --.-%", 10);
-      } else {
-        float soc = display_can.bms_soc_raw * 0.1f;
-        n = snprintf(soc_str, sizeof(soc_str), "SOC:%.1f%%", soc);
-      }
-      memcpy(&lcd_want[0][20 - n], soc_str, n);
-    }
-
-    // Rows 1-2: vehicle speed as large digits
-    if (rpm_stale) {
-      memcpy(&lcd_want[1][6], "NO SIGNAL", 9);
+    char line[LCD_COLS + 1];
+    if (soc_stale) {
+      snprintf(line, sizeof(line), "SOC: --.-%%");
     } else {
-      float rpm = (float)display_can.ez_rpm_raw - 32000.0f;
+      float soc = display_can.bms_soc_raw * 0.1f;
+      snprintf(line, sizeof(line), "SOC: %.1f%%", soc);
+    }
+    lcd_write_text(1, DISPLAY_TEXT_COL, line);
+
+    if (rpm_stale) {
+      snprintf(line, sizeof(line), "VEL: --.-km/h");
+    } else {
+      float rpm = motor_decode_rpm(display_can.ez_rpm_raw);
       rpm = fabsf(rpm);
       float spd_kmh = rpm / DISPLAY_GEAR_RATIO * VEHICLE_TIRE_CIRC_M * 60.0f / 1000.0f;
-      int spd = (int)(spd_kmh + 0.5f);
-      if (spd > 999) spd = 999;
-      draw_speed(spd);
+      snprintf(line, sizeof(line), "VEL: %.1fkm/h", spd_kmh);
     }
+    lcd_write_text(2, DISPLAY_TEXT_COL, line);
 
     if (ret == ESP_OK) ret = lcd_flush();
 

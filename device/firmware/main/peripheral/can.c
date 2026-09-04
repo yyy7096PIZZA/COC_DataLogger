@@ -58,7 +58,7 @@ static void motor_parse_msg1(const uint8_t data[8], TickType_t now) {
   motor.bus_voltage      = (float)can_read_le16(data, 0) * 0.1f;
   motor.bus_current      = (float)can_read_le16(data, 2) * 0.1f - 3200.0f;
   motor.phase_current    = (float)can_read_le16(data, 4) * 0.1f - 3200.0f;
-  motor.rpm              = (float)rpm_raw - 32000.0f;
+  motor.rpm              = motor_decode_rpm(rpm_raw);
   motor.motor_rpm_valid  = true;
   motor.motor_msg1_ready = true;
   motor.motor_valid      = false;
@@ -468,18 +468,37 @@ void task_can(void *pvParameters) {
 
     if (rx_err == ESP_OK) {
       rx_failures = 0;
+
+      // Print the untouched TWAI payload before it is copied into the SD log.
+      // Zero-fill short frames so all eight displayed bytes are safe to read.
+      if (msg.extd && !msg.rtr && msg.identifier == CAN_EZ_ID2) {
+        uint8_t raw_data[8] = { 0 };
+        uint8_t raw_len     = msg.data_length_code;
+        if (raw_len > sizeof(raw_data)) raw_len = sizeof(raw_data);
+        memcpy(raw_data, msg.data, raw_len);
+
+        ESP_LOGI("CAN_RAW",
+          "ID=%08lX DLC=%u DATA=%02X %02X %02X %02X %02X %02X %02X %02X",
+          (unsigned long)msg.identifier, (unsigned)msg.data_length_code,
+          (unsigned)raw_data[0], (unsigned)raw_data[1],
+          (unsigned)raw_data[2], (unsigned)raw_data[3],
+          (unsigned)raw_data[4], (unsigned)raw_data[5],
+          (unsigned)raw_data[6], (unsigned)raw_data[7]);
+      }
+
       log_t log         = { 0 };
+      uint8_t len       = msg.data_length_code;
+      if (len > sizeof(log.payload.can.data)) len = sizeof(log.payload.can.data);
+
       log.payload.can.id           = msg.identifier;
       log.payload.can.extended     = msg.extd;
       log.payload.can.remote       = msg.rtr;
-      log.payload.can.len          = msg.data_length_code;
-      log.payload.can._reserved[0] = 0;
+      log.payload.can.len          = len;
 
-      // 비표준 노드는 DLC > 8을 보낼 수 있으므로 복사는 8바이트로 제한하고,
-      // 짧은 프레임의 나머지 바이트는 0으로 채워 스택 쓰레기가 기록되지 않게 한다
+      // Keep the stored DLC and payload length consistent. Short frames retain
+      // zeroes in the unused bytes without changing the 24-byte log format.
       memset(log.payload.can.data, 0, sizeof(log.payload.can.data));
-      memcpy(log.payload.can.data, msg.data,
-        msg.data_length_code > sizeof(log.payload.can.data) ? sizeof(log.payload.can.data) : msg.data_length_code);
+      memcpy(log.payload.can.data, msg.data, len);
       LOG(LOG_TYPE_CAN, &log);
 
       TickType_t now = xTaskGetTickCount();

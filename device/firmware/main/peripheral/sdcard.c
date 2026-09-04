@@ -1,4 +1,7 @@
+#include <errno.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -17,6 +20,78 @@
 extern struct timeval boot;
 
 char logpath[64];
+static uint32_t log_boot_count;
+
+static bool build_final_log_path(uint64_t boot_time, char *out, size_t out_size) {
+  if (out == NULL || out_size == 0) return false;
+
+  time_t boot_epoch = (time_t)boot_time;
+  struct tm tp;
+  char datetime[24];
+  bool success = false;
+
+  setenv("TZ", storage.tz, 1);
+  tzset();
+
+  if (localtime_r(&boot_epoch, &tp) != NULL &&
+      strftime(datetime, sizeof(datetime), "%Y-%m-%d-%H-%M-%S", &tp) > 0) {
+    int length = snprintf(out, out_size, "/sdcard/%08lu-%s.log",
+      (unsigned long)log_boot_count, datetime);
+    success = length > 0 && (size_t)length < out_size;
+  }
+
+  setenv("TZ", "UTC", 1);
+  tzset();
+  return success;
+}
+
+static int rename_log_after_gps(int fd, uint64_t boot_time) {
+  if (fd < 0) return -1;
+
+  if (fsync(fd) != 0) {
+    ESP_LOGW("SD", "log rename skipped: fsync failed (%s)", strerror(errno));
+    return fd;
+  }
+
+  char oldpath[sizeof(logpath)];
+  char newpath[sizeof(logpath)];
+  snprintf(oldpath, sizeof(oldpath), "%s", logpath);
+
+  if (!build_final_log_path(boot_time, newpath, sizeof(newpath))) {
+    ESP_LOGW("SD", "log rename skipped: final path generation failed");
+    return fd;
+  }
+
+  if (strcmp(oldpath, newpath) == 0) return fd;
+
+  if (close(fd) != 0) {
+    ESP_LOGW("SD", "log close before rename failed (%s)", strerror(errno));
+  }
+
+  if (rename(oldpath, newpath) != 0) {
+    int rename_errno = errno;
+    ESP_LOGW("SD", "log rename failed: %s -> %s (%s)",
+      oldpath, newpath, strerror(rename_errno));
+
+    int reopened_fd = open(oldpath, O_RDWR | O_APPEND);
+    if (reopened_fd >= 0) {
+      lseek(reopened_fd, 0, SEEK_END);
+    }
+    return reopened_fd;
+  }
+
+  snprintf(logpath, sizeof(logpath), "%s", newpath);
+
+  int reopened_fd = open(logpath, O_RDWR | O_APPEND);
+  if (reopened_fd < 0) {
+    ESP_LOGE("SD", "renamed log reopen failed: %s (%s)", logpath, strerror(errno));
+    return -1;
+  }
+
+  lseek(reopened_fd, 0, SEEK_END);
+  INFO(SD, "log renamed after GPS fix: %s -> %s", oldpath, logpath);
+  return reopened_fd;
+}
 
 /*******************************************************************************
  * correct the BOOT record's boot_time in place (STEP 7).
@@ -93,6 +168,14 @@ static void task_sdcard(void *pvParameters) {
     uint64_t fixup = boot_time_fixup_epoch;
     if (!boot_fixed && fixup != 0) {
       correct_boot_record(fd, fixup);
+      int new_fd = rename_log_after_gps(fd, fixup);
+      if (new_fd < 0) {
+        debug_monitor_publish_sd_status(true, false);
+        FATAL_LOG(&logbuf.run, SD, "log reopen failure after GPS rename");
+        vTaskDelete(NULL);
+        return;
+      }
+      fd = new_fd;
       boot_fixed = true;
     }
 
@@ -178,6 +261,7 @@ void sdcard_init(void) {
   bootcnt++;
   nvs_set_u32(nvs, "bootcnt", bootcnt);
   nvs_commit(nvs);
+  log_boot_count = bootcnt;
 
   // set log file (datetime is 1970 until GPS sets the clock; the counter keeps it unique)
   setenv("TZ", storage.tz, 1);
