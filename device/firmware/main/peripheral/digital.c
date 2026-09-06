@@ -49,10 +49,10 @@ static inline bool wheel_enabled(wheel_index_t wheel) {
 
 static gpio_num_t wheel_gpio(wheel_index_t wheel) {
   static const gpio_num_t gpio_by_wheel[WHEEL_COUNT] = {
-    [WHEEL_FL] = GPIO_NUM_11,
-    [WHEEL_FR] = GPIO_NUM_12,
-    [WHEEL_RL] = GPIO_NUM_13,
-    [WHEEL_RR] = GPIO_NUM_14,
+    [WHEEL_FL] = GPIO_NUM_12,
+    [WHEEL_FR] = GPIO_NUM_11,
+    [WHEEL_RL] = GPIO_NUM_14,
+    [WHEEL_RR] = GPIO_NUM_13,
   };
 
   return gpio_by_wheel[wheel];

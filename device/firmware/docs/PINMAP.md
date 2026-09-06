@@ -42,10 +42,10 @@
 
 | 사용자 센서 | 연결 방식 | GPIO / 채널 |
 |-------------|-----------|-------------|
-| 휠스피드센서 FL | 디지털 입력 DIN1 | GPIO11 |
-| 휠스피드센서 FR | 디지털 입력 DIN2 | GPIO12 |
-| 휠스피드센서 RL | 디지털 입력 DIN3 | GPIO13 |
-| 휠스피드센서 RR | 디지털 입력 DIN4 | GPIO14 |
+| 휠스피드센서 FL | 디지털 입력 DIN2 | GPIO12 |
+| 휠스피드센서 FR | 디지털 입력 DIN1 | GPIO11 |
+| 휠스피드센서 RL | 디지털 입력 DIN4 | GPIO14 |
+| 휠스피드센서 RR | 디지털 입력 DIN3 | GPIO13 |
 | 선형 포텐쇼미터 ×4 | ADS1115 모듈 A채널 | adc1 A0~A3 (ain1~ain4) |
 | ADS1115 모듈 ×2 | I2C1 | GPIO42/47 |
 | GPS 모듈 | UART1 | GPIO17/18 |
@@ -60,10 +60,10 @@
 |:----:|-----------|------|-----------|-----------|
 | 9  | I2C0 SDA        | SDA       | 자이로·LCD 공유 버스       | `main/main.c:231` |
 | 10 | I2C0 SCL        | SCL       | 자이로·LCD 공유 버스       | `main/main.c:230` |
-| 11 | GPIO In (ISR)   | DIN1      | 휠스피드센서 FL (앞 왼쪽)   | `main/peripheral/digital.c` |
-| 12 | GPIO In (ISR)   | DIN2      | 휠스피드센서 FR (앞 오른쪽) | `main/peripheral/digital.c` |
-| 13 | GPIO In (ISR)   | DIN3      | 휠스피드센서 RL (뒤 왼쪽)   | `main/peripheral/digital.c` |
-| 14 | GPIO In (ISR)   | DIN4      | 휠스피드센서 RR (뒤 오른쪽) | `main/peripheral/digital.c` |
+| 11 | GPIO In (ISR)   | DIN1      | 휠스피드센서 FR (앞 오른쪽) | `main/peripheral/digital.c` |
+| 12 | GPIO In (ISR)   | DIN2      | 휠스피드센서 FL (앞 왼쪽)   | `main/peripheral/digital.c` |
+| 13 | GPIO In (ISR)   | DIN3      | 휠스피드센서 RR (뒤 오른쪽) | `main/peripheral/digital.c` |
+| 14 | GPIO In (ISR)   | DIN4      | 휠스피드센서 RL (뒤 왼쪽)   | `main/peripheral/digital.c` |
 | 15 | TWAI (CAN) TX   | CAN TX    | CAN 트랜시버              | `main/peripheral/can.c:51` |
 | 16 | TWAI (CAN) RX   | CAN RX    | CAN 트랜시버              | `main/peripheral/can.c:51` |
 | 17 | UART1 TX        | → GPS RX  | u-blox GPS                | `main/peripheral/gps.c:64` |
@@ -139,10 +139,10 @@ I2C는 버스라 두 모듈이 SDA/SCL을 공유하고, **ADDR 핀 결선으로 
 
 | GPIO | 신호 | 모드 | 정의 위치 |
 |:----:|------|------|-----------|
-| 11 | DIN1 (FL) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
-| 12 | DIN2 (FR) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
-| 13 | DIN3 (RL) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
-| 14 | DIN4 (RR) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
+| 11 | DIN1 (FR) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
+| 12 | DIN2 (FL) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
+| 13 | DIN3 (RR) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
+| 14 | DIN4 (RL) | Input + ISR (pull-down, posedge) | `main/peripheral/digital.c` |
 
 - 휠스피드센서 4개(FL/FR/RL/RR)가 여기에 연결됩니다.
 

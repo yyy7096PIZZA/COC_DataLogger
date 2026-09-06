@@ -11,20 +11,20 @@
 
 /***** 기어비 및 타이어 설정 *****/
 #define DISPLAY_GEAR_RATIO  4.02f
-
-#define DISPLAY_STALE_MS     2000     // 이 시간 동안 CAN 없으면 "--" 표시
+#define DISPLAY_REFRESH_MS   200
+#define DISPLAY_PROBE_MS    1000
 
 /***** PCF8574 + HD44780 *****/
 #define PCF8574_ADDR  0x27   // A0-A2 모두 GND 기본 주소
 #define LCD_BL        0x08   // 백라이트 비트
 #define LCD_EN        0x04   // Enable
 #define LCD_RS        0x01   // Register Select (0=cmd, 1=data)
-#define LCD_ROWS      4
+#define LCD_ROWS      2
 #define LCD_COLS      16
 
 #define DISPLAY_TEXT_COL 1
 
-static const uint8_t ROW_ADDR[LCD_ROWS] = {0x00, 0x40, 0x10, 0x50};
+static const uint8_t ROW_ADDR[LCD_ROWS] = {0x00, 0x40};
 
 static i2c_master_dev_handle_t pcf8574_dev;
 
@@ -117,7 +117,7 @@ static esp_err_t lcd_init(void) {
 /*******************************************************************************
  * framebuffer diff rendering
  * lcd_want = 이번 사이클에 그리고 싶은 화면, lcd_frame = 실제 LCD에 있는 내용.
- * 달라진 글자만 I2C로 전송한다 — 매초 60자 전체 전송 대신 보통 몇 글자로 끝나
+ * 달라진 글자만 I2C로 전송한다 — 매번 화면 전체를 전송하지 않고 보통 몇 글자로 끝나
  * 같은 I2C0 버스를 쓰는 자이로(100Hz)의 대기 시간이 줄어든다.
  ******************************************************************************/
 static uint8_t lcd_want[LCD_ROWS][LCD_COLS];
@@ -205,12 +205,10 @@ static esp_err_t display_connect(i2c_master_bus_handle_t i2c0, bool *device_miss
 }
 
 /*******************************************************************************
- * display refresh task — 1 Hz
+ * display refresh task — 200 ms
  *
- * Row 0: blank
- * Row 1: SOC text
- * Row 2: vehicle speed text
- * Row 3: blank
+ * Row 0: SOC text
+ * Row 1: vehicle speed text
  ******************************************************************************/
 void task_display(void *pvParameters) {
   (void)pvParameters;
@@ -232,6 +230,11 @@ void task_display(void *pvParameters) {
   bool ever_online              = false;
   uint32_t consecutive_failures = 0;
   TickType_t tick               = xTaskGetTickCount();
+  bool rpm_received             = false;
+  bool soc_received             = false;
+  uint16_t cached_rpm_raw       = 0;
+  uint16_t cached_soc_raw       = 0;
+  TickType_t last_probe_tick    = tick;
 
   // Clear the startup placeholder. A missing or unusable enabled display is
   // immediately set back to ERROR by the first connection attempt below.
@@ -273,42 +276,54 @@ void task_display(void *pvParameters) {
         ESP_LOGI("DISPLAY", "device ready");
       }
 
-      ever_online = true;
-      tick        = xTaskGetTickCount();
+      ever_online     = true;
+      tick            = xTaskGetTickCount();
+      last_probe_tick = tick;
     }
 
-    vTaskDelayUntil(&tick, pdMS_TO_TICKS(1000));
+    vTaskDelayUntil(&tick, pdMS_TO_TICKS(DISPLAY_REFRESH_MS));
 
-    // Probe even when the framebuffer has no dirty cells, otherwise an
-    // unplugged display with static content could remain undetected forever.
-    esp_err_t ret = i2c_master_probe(i2c0, PCF8574_ADDR, I2C_TIMEOUT_MS);
-
+    // 화면은 200 ms마다 갱신하되, 내용이 바뀌지 않을 때의 연결 확인은 1초마다만
+    // 수행해 자이로와 공유하는 I2C0 버스의 불필요한 트래픽을 줄인다.
+    esp_err_t ret  = ESP_OK;
     TickType_t now = xTaskGetTickCount();
-    bool rpm_stale = !display_can.ez_rpm_valid ||
-                     (now - display_can.ez_rpm_tick) > pdMS_TO_TICKS(DISPLAY_STALE_MS);
-    bool soc_stale = !display_can.bms_soc_valid ||
-                     (now - display_can.bms_soc_tick) > pdMS_TO_TICKS(DISPLAY_STALE_MS);
+    if ((TickType_t)(now - last_probe_tick) >= pdMS_TO_TICKS(DISPLAY_PROBE_MS)) {
+      ret             = i2c_master_probe(i2c0, PCF8574_ADDR, I2C_TIMEOUT_MS);
+      last_probe_tick = now;
+    }
+
+    // CAN 값이 잠시 끊겨도 "--"로 되돌리지 않고 마지막 정상값을 유지한다.
+    // 새 값이 도착했을 때만 캐시를 갱신하므로 서로 다른 CAN 주기의 간격에서도
+    // LCD가 정상값과 미수신 표시 사이를 오가지 않는다.
+    if (display_can.ez_rpm_valid) {
+      cached_rpm_raw = display_can.ez_rpm_raw;
+      rpm_received   = true;
+    }
+    if (display_can.bms_soc_valid) {
+      cached_soc_raw = display_can.bms_soc_raw;
+      soc_received   = true;
+    }
 
     memset(lcd_want, ' ', sizeof(lcd_want));
 
     char line[LCD_COLS + 1];
-    if (soc_stale) {
+    if (!soc_received) {
       snprintf(line, sizeof(line), "SOC: --.-%%");
     } else {
-      float soc = display_can.bms_soc_raw * 0.1f;
+      float soc = cached_soc_raw * 0.1f;
       snprintf(line, sizeof(line), "SOC: %.1f%%", soc);
     }
-    lcd_write_text(1, DISPLAY_TEXT_COL, line);
+    lcd_write_text(0, DISPLAY_TEXT_COL, line);
 
-    if (rpm_stale) {
+    if (!rpm_received) {
       snprintf(line, sizeof(line), "VEL: --.-km/h");
     } else {
-      float rpm = motor_decode_rpm(display_can.ez_rpm_raw);
+      float rpm = motor_decode_rpm(cached_rpm_raw);
       rpm = fabsf(rpm);
       float spd_kmh = rpm / DISPLAY_GEAR_RATIO * VEHICLE_TIRE_CIRC_M * 60.0f / 1000.0f;
       snprintf(line, sizeof(line), "VEL: %.1fkm/h", spd_kmh);
     }
-    lcd_write_text(2, DISPLAY_TEXT_COL, line);
+    lcd_write_text(1, DISPLAY_TEXT_COL, line);
 
     if (ret == ESP_OK) ret = lcd_flush();
 

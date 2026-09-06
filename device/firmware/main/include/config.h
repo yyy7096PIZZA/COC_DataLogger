@@ -151,7 +151,7 @@ enum {
 
 /***** vehicle tire configuration (shared by display and wheel-speed sensors) *****/
 #define VEHICLE_WET_TRACK 0
-#define VEHICLE_TIRE_DIAM_DRY_M 0.40f  // dry: diameter 40 cm
+#define VEHICLE_TIRE_DIAM_DRY_M 0.406f  // dry: diameter 406 mm
 #define VEHICLE_TIRE_DIAM_WET_M 0.50f  // wet: diameter 50 cm
 
 #if VEHICLE_WET_TRACK

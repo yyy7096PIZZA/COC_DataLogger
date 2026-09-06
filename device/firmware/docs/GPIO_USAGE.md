@@ -19,10 +19,10 @@
 | 8  | 미점유 | 자유(안전) | ADC1_CH7 (아날로그 확장 가능) | — |
 | 9  | I2C0 SDA — 자이로·LCD | 사용중 | 공유 버스 (MPU6050 0x68, PCF8574 0x27) | `main/main.c:231` |
 | 10 | I2C0 SCL — 자이로·LCD | 사용중 | 공유 버스 | `main/main.c:230` |
-| 11 | DIN1 디지털 입력 (ISR) — 휠스피드 FL | 사용중 | pull-down + POSEDGE | `main/peripheral/digital.c` |
-| 12 | DIN2 디지털 입력 (ISR) — 휠스피드 FR | 사용중 | | `main/peripheral/digital.c` |
-| 13 | DIN3 디지털 입력 (ISR) — 휠스피드 RL | 사용중 | | `main/peripheral/digital.c` |
-| 14 | DIN4 디지털 입력 (ISR) — 휠스피드 RR | 사용중 | | `main/peripheral/digital.c` |
+| 11 | DIN1 디지털 입력 (ISR) — 휠스피드 FR | 사용중 | pull-down + POSEDGE | `main/peripheral/digital.c` |
+| 12 | DIN2 디지털 입력 (ISR) — 휠스피드 FL | 사용중 | | `main/peripheral/digital.c` |
+| 13 | DIN3 디지털 입력 (ISR) — 휠스피드 RR | 사용중 | | `main/peripheral/digital.c` |
+| 14 | DIN4 디지털 입력 (ISR) — 휠스피드 RL | 사용중 | | `main/peripheral/digital.c` |
 | 15 | TWAI TX (CAN) | 사용중 | CAN 트랜시버 | `main/peripheral/can.c:51` |
 | 16 | TWAI RX (CAN) | 사용중 | CAN 트랜시버 | `main/peripheral/can.c:51` |
 | 17 | UART1 TX → GPS RX | 사용중 | u-blox GPS | `main/peripheral/gps.c:64` |
@@ -96,10 +96,10 @@
 
 | 사용자 센서 | GPIO / 채널 |
 |-------------|-------------|
-| 휠스피드센서 FL | DIN1 = GPIO11 |
-| 휠스피드센서 FR | DIN2 = GPIO12 |
-| 휠스피드센서 RL | DIN3 = GPIO13 |
-| 휠스피드센서 RR | DIN4 = GPIO14 |
+| 휠스피드센서 FL | DIN2 = GPIO12 |
+| 휠스피드센서 FR | DIN1 = GPIO11 |
+| 휠스피드센서 RL | DIN4 = GPIO14 |
+| 휠스피드센서 RR | DIN3 = GPIO13 |
 | 선형 포텐쇼미터 ×4 | ADS1115 A0~A3 (ain1~ain4) |
 | ADS1115 모듈 ×2 | GPIO42/47 (I2C1) |
 | GPS 모듈 | GPIO17/18 (UART1) |
